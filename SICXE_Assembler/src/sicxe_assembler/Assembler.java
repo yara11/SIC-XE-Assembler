@@ -4,49 +4,27 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
 
 public class Assembler {
     String registers_file = "register_set.txt";
     String instruction_set_file = "instruction_set.txt";
-    public static HashMap<String,InstrDetails> InstrSet = new HashMap<>();
-    public static HashMap<String,String> RegisterSet = new HashMap<>();
+    // public static HashMap<String,InstrDetails> InstrSet = new HashMap<>();
+    // public static HashMap<String,String> RegisterSet = new HashMap<>();
     
     public Assembler() {
-        // Read the registers file
-        try (BufferedReader br = new BufferedReader(new FileReader(registers_file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-               // add entry to the HashMap: RegisterSet
-               String[] parts = line.split(" ");
-               RegisterSet.put(parts[0], parts[1]);
-            }
-            System.out.println("Register set: ");
-            System.out.println(Arrays.asList(RegisterSet));
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Load the registers file
+        RegisterSet.getInstance(registers_file);
         
-        // Read the instruction set file
-        try (BufferedReader br = new BufferedReader(new FileReader(instruction_set_file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-               String[] parts = line.split(" ");
-               InstrSet.put(parts[0], new InstrDetails(parts[0], Integer.valueOf(parts[1]), parts[2], Integer.valueOf(parts[3]), Integer.valueOf(parts[4]), Integer.valueOf(parts[5])));
-            }
-            System.out.println("Instruction set: ");
-            for(String key: InstrSet.keySet()){
-                InstrSet.get(key).printDetails();
-            }
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        
+        // Load instruction set file
+        InstructionSet.getInstance(instruction_set_file);
     }
     
     
     public static void main(String[] args) {
-        Assembler start = new Assembler();
+        //Assembler start = new Assembler();
+        System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }
     
 }

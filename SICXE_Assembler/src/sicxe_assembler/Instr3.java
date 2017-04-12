@@ -40,7 +40,7 @@ public class Instr3 extends Instruction {
     public String getObjectCode() {
         String first_byte, flags, disp;
         // first byte:
-        String opcode = Assembler.InstrSet.get(this.mnemonic.toUpperCase()).getOpcode();
+        String opcode = InstructionSet.getInstruction(this.mnemonic).getOpcode();
         int ni = toInt(this.b)*2 + toInt(this.p);
         first_byte = decToHex(Integer.parseInt(opcode, 16) + ni, 2);
         // flags:

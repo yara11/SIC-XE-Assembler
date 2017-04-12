@@ -7,6 +7,6 @@ public class Instr1 extends Instruction {
 	}
         @Override
 	public String getObjectCode(){
-            return Assembler.InstrSet.get(this.mnemonic.toUpperCase()).getOpcode(); // 2 hex digits
+            return InstructionSet.getInstruction(this.mnemonic).getOpcode(); // 2 hex digits
 	}
 }

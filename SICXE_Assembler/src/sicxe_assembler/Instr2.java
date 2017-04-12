@@ -10,9 +10,9 @@ public class Instr2 extends Instruction {
 	}
         @Override
 	public String getObjectCode(){
-            String opcode = Assembler.InstrSet.get(this.mnemonic.toUpperCase()).getOpcode(); // 2 hex digits
-            String r1_code = Assembler.RegisterSet.get(this.r1.toUpperCase()); // 1 hex digit
-            String r2_code = Assembler.RegisterSet.get(this.r2.toUpperCase()); // 1 hex digit
+            String opcode = InstructionSet.getInstruction(this.mnemonic).getOpcode(); // 2 hex digits
+            String r1_code = RegisterSet.getRegCode(this.r1); // 1 hex digit
+            String r2_code = RegisterSet.getRegCode(this.r2); // 1 hex digit
             return opcode + r1_code + r2_code;
 	}
 }
