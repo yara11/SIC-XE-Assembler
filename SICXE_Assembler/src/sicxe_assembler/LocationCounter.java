@@ -1,26 +1,18 @@
 package sicxe_assembler;
 
 public class LocationCounter {
-    private static int current_loc;
-    private static LocationCounter locationCounter = null;
+    private int current_loc;
     
-    private LocationCounter(int initial) {
-        current_loc = initial;
+    public LocationCounter(int initial) {
+        this.current_loc = initial;
     }
     
-    public static LocationCounter getInstance(int initial) {
-        if(locationCounter == null) {
-            locationCounter = new LocationCounter(initial);
-        }
-        return locationCounter;
+    public int increment(int offset) {
+        this.current_loc += offset;
+        return this.current_loc;
     }
     
-    public static int increment(int offset) {
-        current_loc += offset;
-        return current_loc;
-    }
-    
-    public static int getLocation() {
-        return current_loc;
+    public int getLocation() {
+        return this.current_loc;
     }
 }
