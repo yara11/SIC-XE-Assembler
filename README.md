@@ -6,3 +6,4 @@ SIC/XE Two Pass Assembler in Java
 - [ ] Handle empty line in validation
 - [ ] Handle different addressing modes: @, #, X
 - [ ] Handle format 4: +
+- [ ] Change location counter when START is found
