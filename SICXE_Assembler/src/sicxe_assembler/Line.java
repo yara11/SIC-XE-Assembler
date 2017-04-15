@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Formatter;
 
 public class Line {
-    private int line_no;
+    private int line_no, size = 0;
     private Boolean isError, isComment, isDirective;
     private String address, label, mnemonic, comment, error_message;
     private ArrayList<String> operands = new ArrayList();
@@ -26,19 +26,21 @@ public class Line {
         if(code_line.charAt(0) == '.') {
             this.isComment = true;
             this.line_no = last_line_no + 1;
-            this.address = decToHex(LOCCTR.getLocation(), 6);
+            this.address = Assembler.decToHex(LOCCTR.getLocation(), 6);
             this.comment = code_line;
+            this.size = 0;
         }
         else {
             // Split the line into diff parts of the instruction
             this.label = hamada(code_line, 0, 7);
             this.mnemonic = hamada(code_line, 9, 14);
             String operands_str = hamada(code_line, 17, 34);
-            this.operands = new ArrayList(Arrays.asList(operands_str.split(",")));
+            if(operands_str != null)
+                this.operands = new ArrayList(Arrays.asList(operands_str.split(",")));
             this.comment = hamada(code_line, 35, 65);
             // Instruction validation:
             // 1. Check for repeated label
-            if(this.label != null && symbolTable.isLabel(this.label)) {
+            if(this.label.length() > 0 && symbolTable.isLabel(this.label)) {
                 this.isError = true;
                 this.error_message = String.format("***Error: Symbol %s is already defined.", this.label);
             }
@@ -75,6 +77,10 @@ public class Line {
                     this.isError = true;
                     this.error_message = "***Error: invalid syntax";
                 }
+                else {
+                    this.line_no = last_line_no + 1;
+                    this.size = InstructionSet.getInstruction(this.mnemonic).getFormat();
+                }
             }
         }
     }
@@ -84,13 +90,10 @@ public class Line {
     // TODO : rename :D
     private String hamada(String str, int stt, int end) {
         if(stt >= str.length()){
-            return null;
+            return "";
         }
         String ret = str.substring(stt, Math.min(end, str.length()-1));
         ret = ret.replaceAll("\\s",""); // remove all whitespaces
-        if(ret.length() == 0){ // just to save us extra conditions
-            return null;
-        }
         return ret;
     }
     
@@ -100,9 +103,9 @@ public class Line {
         return Character.isDigit(str.charAt(0));
     }
     
-    public Instruction getInstruction() {
+    /*public Instruction getInstruction() {
         // TODO
-    }
+    }*/
     
     public String getLine() {
         if(isComment) {
@@ -119,12 +122,20 @@ public class Line {
         return String.format("%3d   %6s   %8s   %6s   %18s   %31s", line_no, address, label, mnemonic, operands_string, comment);
     }
     
-    // converts decimal int to hex string with specified number of digits
-    private String decToHex(int n, int digits) {
-        String hex_num = Integer.toHexString(n);
-        int len = hex_num.length();
-        for(int i = 0; i < digits - len; i++)
-            hex_num = '0' + hex_num;
-        return hex_num;
+    public String getLabel() {
+        if(this.label.length() == 0)
+            return null;
+        return this.label;
     }
+    
+    // todo: move to Instruction.java
+    public int getSize() {
+        return this.size;
+    }
+    
+    public Boolean isValid() {
+        return !this.isError;
+    }
+    
+    
 }

@@ -42,10 +42,10 @@ public class Instr3 extends Instruction {
         // first byte:
         String opcode = InstructionSet.getInstruction(this.mnemonic).getOpcode();
         int ni = toInt(this.b)*2 + toInt(this.p);
-        first_byte = decToHex(Integer.parseInt(opcode, 16) + ni, 2);
+        first_byte = Assembler.decToHex(Integer.parseInt(opcode, 16) + ni, 2);
         // flags:
         int fs = toInt(x)*8 + toInt(b)*4 + toInt(p)*2 + toInt(e);
-        flags = decToHex(fs, 1);
+        flags = Assembler.decToHex(fs, 1);
         disp = getDisplacement();
         return first_byte + flags + disp;
     }
@@ -60,15 +60,6 @@ public class Instr3 extends Instruction {
     
     private int toInt(Boolean f) {
         return f ? 1 : 0;
-    }
-    
-    // converts decimal int to hex string with specified number of digits
-    private String decToHex(int n, int digits) {
-        String hex_num = Integer.toHexString(n);
-        int len = hex_num.length();
-        for(int i = 0; i < digits - len; i++)
-            hex_num = '0' + hex_num;
-        return hex_num;
     }
     
 }
