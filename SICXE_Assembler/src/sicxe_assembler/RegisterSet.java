@@ -35,4 +35,8 @@ public class RegisterSet {
     public static String getRegCode(String name) {
         return RegSet.get(name.toUpperCase());
     }
+    
+    public static Boolean isRegister(String name) {
+        return RegSet.get(name.toUpperCase()) != null;
+    }
 }

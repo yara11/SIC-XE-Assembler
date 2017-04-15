@@ -13,4 +13,8 @@ public class SymbolTable {
     public String getLocation(String symbol) {
         return SymTable.get(symbol);
     }
+    
+    public Boolean isLabel(String symbol) {
+        return SymTable.get(symbol) != null;
+    }
 }

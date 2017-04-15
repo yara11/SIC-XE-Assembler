@@ -15,6 +15,15 @@ public class InstrDetails {
         this.regOps = regOps;
         this.dirOps = dirOps;
     }
+    public int getMemOps() {
+        return this.memOps;
+    }
+    public int getDirOps() {
+        return this.dirOps;
+    }
+    public int getRegOps() {
+        return this.regOps;
+    }
     public int getFormat() {
         return this.format;
     }
