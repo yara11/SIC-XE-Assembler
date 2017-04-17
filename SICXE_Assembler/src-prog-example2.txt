@@ -1,0 +1,8 @@
+  1   000000            LDT     #11
+  2   000003            +LDX    #0
+         ***Error: Undefined operand STR1
+         ***Error: Undefined operand STR2
+  3   000007            TIXR    T
+         ***Error: Undefined operand MOVECH
+         ***Error: mnemonic BYTE is undefined
+         ***Error: mnemonic RESB is undefined

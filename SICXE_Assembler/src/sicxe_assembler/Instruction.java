@@ -6,7 +6,7 @@ public class Instruction {
 	private int format;
 	private String mnemonic;
         private Boolean n, i, x, b, p, e;
-        private ArrayList<Operand> operands;
+        private ArrayList<Operand> operands = new ArrayList<>();
         
         // Constructor for format 1
         public Instruction(String mnemonic) {

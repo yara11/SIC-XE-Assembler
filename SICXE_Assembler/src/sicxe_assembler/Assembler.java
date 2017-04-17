@@ -2,32 +2,35 @@ package sicxe_assembler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Assembler {
-    private final String registers_file = "register_set.txt";
-    private final String instruction_set_file = "instruction_set.txt";
-    private String assembly_file_name;
+    private final String regFileName = "register_set.txt";
+    private final String instrSetFileName = "instruction_set.txt";
+    // private String asmFileName;
     private ArrayList<Line> linesOfCode = new ArrayList<>();
     private SymbolTable symbolTable = new SymbolTable();
     private LocationCounter LOCCTR = new LocationCounter(0);
     
-    public Assembler(String filename) {
+    public Assembler() {
         // Load the registers file
-        RegisterSet.getInstance(registers_file);
+        RegisterSet.getInstance(regFileName);
         // Load instruction set file
-        InstructionSet.getInstance(instruction_set_file);
-        // Perform pass one
-        this.assembly_file_name = filename;
+        InstructionSet.getInstance(instrSetFileName);
+        
     }
     
-    public void pass1() {
+    public void pass1(String asmFileName, String outputSrcFileName) {
         // Load source code file
         int line_no = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(assembly_file_name))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(asmFileName))) {
+            FileWriter fw = new FileWriter(outputSrcFileName);
             String line;
             while ((line = br.readLine()) != null) {
+                if(line.trim().isEmpty())
+                    continue;
                 Line cur_line = new Line(line,LOCCTR,symbolTable,line_no);
                 linesOfCode.add(cur_line);
                 if(cur_line.isValid()) {
@@ -38,7 +41,11 @@ public class Assembler {
                     LOCCTR.increment(cur_line.getSize());
                     line_no++;
                 }
+                fw.write(cur_line.toString() + '\n');
+                System.out.println(cur_line.toString());
             }
+            br.close();
+            fw.close();
         }catch (IOException e) {
         }
         
@@ -55,7 +62,10 @@ public class Assembler {
     
     
     public static void main(String[] args) {
-        Assembler assembler = new Assembler("example.txt");
+        String asmFileName = "example2.txt";
+        String srcCodeFileName = "src-prog-" + asmFileName;
+        Assembler assembler = new Assembler();
+        assembler.pass1(asmFileName, srcCodeFileName);
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }

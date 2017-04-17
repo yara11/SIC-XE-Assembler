@@ -11,7 +11,6 @@
 package sicxe_assembler;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
 
 public class Line {
     // Line stuff
@@ -20,16 +19,19 @@ public class Line {
     private Instruction instr;
     // Other stuff
     private int size = 0;
-    private Boolean isComment, isError;
+    private Boolean isComment = false, isError = false;
     private String error_message = null;
+    // just keep it for printing
+    private String code_line;
     
     // TODO: Any extras should be done for directives?
-    // **** UNHANDELED: format 4, X, literals, etc...
+    // **** UNHANDELED: Directives, literals, etc...
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
+        this.code_line = code_line;
+        this.line_no = last_line_no + 1;
+        this.address = Assembler.decToHex(LOCCTR.getLocation(), 6);
         if(code_line.charAt(0) == '.') {
             this.isComment = true;
-            this.line_no = last_line_no + 1;
-            this.address = Assembler.decToHex(LOCCTR.getLocation(), 6);
             this.comment = code_line;
             this.size = 0;
         }
@@ -67,10 +69,13 @@ public class Line {
             }
             if(operands_str != null) {
                 operands = new ArrayList(Arrays.asList(operands_str.split(",")));
+                
             }
             
             /***     Get comment       ***/
             this.comment = hamada(code_line, 35, 65);
+            
+            // System.out.println(label + " " + mnemonic + " " + operands + " " + comment);
             
             /***     Validate line       ***/
             // Validate label
@@ -111,7 +116,7 @@ public class Line {
         int rNum = 0, lNum = 0, vNum = 0;
         for(int i = 0; i < operands.size(); i++) {
             if(!Operand.isValid(operands.get(i), symbolTable)) {
-                this.error_message = String.format("*** Error: Undefined operand %s", operands.get(i));
+                this.error_message = String.format("***Error: Undefined operand %s", operands.get(i));
                 return false;
             }
             char opType = (new Operand(operands.get(i), symbolTable)).getType();
@@ -147,7 +152,7 @@ public class Line {
         if(stt >= str.length()){
             return "";
         }
-        String ret = str.substring(stt, Math.min(end, str.length()-1));
+        String ret = str.substring(stt, Math.min(end + 1, str.length()));
         ret = ret.replaceAll("\\s",""); // remove all whitespaces
         return ret;
     }
@@ -162,5 +167,16 @@ public class Line {
     
     public int getSize() {
         return this.size;
+    }
+    
+    @Override
+    public String toString() {
+        if(isComment) {
+            return String.format("%3d   %6s   %-66s", line_no, address, comment);
+        }
+        if(isError) {
+            return String.format("%9s%s", "", error_message);
+        }
+        return String.format("%3d   %6s   %s", line_no, address, code_line);
     }
 }

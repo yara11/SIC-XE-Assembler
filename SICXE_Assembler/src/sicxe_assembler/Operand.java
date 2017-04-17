@@ -26,7 +26,7 @@ public class Operand {
     }
     
     private static Boolean isNumber(String str) {
-        if(str == null)
+        if(str == null || str.length() == 0)
             return false;
         if(!Character.isDigit(str.charAt(0)))
             return false;
