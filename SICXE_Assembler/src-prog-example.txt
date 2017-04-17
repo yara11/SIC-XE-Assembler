@@ -1,0 +1,7 @@
+         ***Error: mnemonic START is undefined
+  1   000000   .THIS IS A COMMENT LINE                                           
+         ***Error: mnemonic BYTE is undefined
+         ***Error: mnemonic RESB is undefined
+         ***Error: mnemonic RESW is undefined
+         ***Error: Undefined operand ZERO
+         ***Error: Undefined operand INDEX

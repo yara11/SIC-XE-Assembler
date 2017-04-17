@@ -145,7 +145,7 @@ public class Line {
     private Boolean validateNewLabel(String lbl, SymbolTable symbolTable) {
         if(lbl == null)
             return true;
-        return !(Character.isDigit(lbl.charAt(0)) || symbolTable.isLabel(lbl));
+        return !(Character.isDigit(lbl.charAt(0)) || symbolTable.isUsedLabel(lbl));
     }
     
     private String hamada(String str, int stt, int end) {

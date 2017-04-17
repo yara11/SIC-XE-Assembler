@@ -23,10 +23,12 @@ public class Assembler {
     }
     
     public void pass1(String asmFileName, String outputSrcFileName) {
+        this.collectLabels(asmFileName);
         // Load source code file
         int line_no = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(asmFileName))) {
             FileWriter fw = new FileWriter(outputSrcFileName);
+            FileWriter symW = new FileWriter("SymbolTable.txt");
             String line;
             while ((line = br.readLine()) != null) {
                 if(line.trim().isEmpty())
@@ -35,8 +37,10 @@ public class Assembler {
                 linesOfCode.add(cur_line);
                 if(cur_line.isValid()) {
                     // Update symbol table
-                    if(cur_line.getLabel() != null)
+                    if(cur_line.getLabel() != null) {
                         symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6));
+                        symW.write(String.format("%s       %s", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
+                    }
                     // Update location counter
                     LOCCTR.increment(cur_line.getSize());
                     line_no++;
@@ -46,9 +50,26 @@ public class Assembler {
             }
             br.close();
             fw.close();
+            symW.close();
         }catch (IOException e) {
         }
         
+    }
+    
+    // Because labels may be declared after they are used,
+    // we need a way to save them before sgkzdjngldsin
+    private void collectLabels(String asmFileName) {
+        try (BufferedReader br = new BufferedReader(new FileReader(asmFileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if(line.trim().isEmpty())
+                    continue;
+                String label = line.substring(0, Math.min(8, line.length()));
+                symbolTable.addSymbol(label, null);
+            }
+            br.close();
+        }catch (IOException e) {
+        }
     }
     
     // converts decimal int to hex string with specified number of digits

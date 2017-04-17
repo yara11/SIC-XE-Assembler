@@ -15,6 +15,10 @@ public class SymbolTable {
     }
     
     public Boolean isLabel(String symbol) {
+        return SymTable.containsKey(symbol);
+    }
+    
+    public Boolean isUsedLabel(String symbol) {
         return SymTable.get(symbol) != null;
     }
 }
