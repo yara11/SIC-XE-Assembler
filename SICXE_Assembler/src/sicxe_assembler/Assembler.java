@@ -30,13 +30,12 @@ public class Assembler {
             FileWriter fw = new FileWriter(outputSrcFileName);
             FileWriter symW = new FileWriter("SymbolTable.txt");
             String line;
-            int k = 0;
             while ((line = br.readLine()) != null) {
                 if(line.trim().isEmpty())
                     continue;
                 Line cur_line = new Line(line,LOCCTR,symbolTable,line_no);
                 linesOfCode.add(cur_line);
-                if(k == 0 && Line.hamada(line, 9, 14).toUpperCase().equals("START")) {
+                if(line_no == 0 && Line.hamada(line, 9, 14).toUpperCase().equals("START")) {
                     int adrs = Integer.parseInt(Line.hamada(line, 17, 34).trim(), 16 );
                     cur_line.unError();
                     LOCCTR = new LocationCounter(adrs);
@@ -50,18 +49,18 @@ public class Assembler {
                     break;
                 }
                 if(cur_line.isValid()) {
-                    // Update symbol table
-                    if(cur_line.getLabel() != null) {
-                        symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6));
-                        symW.write(String.format("%s       %s", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
-                    }
-                    // Update location counter
-                    LOCCTR.increment(cur_line.getSize());
-                    line_no++;
+                    // Do we need this?
                 }
+                // Update symbol table
+                if(cur_line.getLabel() != null) {
+                    symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6));
+                    symW.write(String.format("%-16s       %s\n", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
+                }
+                // Update location counter
+                LOCCTR.increment(cur_line.getSize());
+                line_no++;
                 fw.write(cur_line.toString() + '\n');
                 System.out.println(cur_line.toString());
-                k++;
             }
             br.close();
             fw.close();
@@ -108,7 +107,7 @@ public class Assembler {
     
     
     public static void main(String[] args) {
-        String asmFileName = "example.txt";
+        String asmFileName = "example3.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);

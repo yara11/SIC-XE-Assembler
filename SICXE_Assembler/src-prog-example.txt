@@ -2,8 +2,9 @@
   2   0003A0   .THIS IS A COMMENT LINE                                           
   3   0003A0   LBL1     BYTE    X'ABCDEF'
   4   0003A3   LBL2     RESB    4
+  5   0003A7   LBL2     RESW    1
          ***Error: Symbol LBL2 is already defined.
-  5   0003A7   TOP      LDA     ZERO
-  6   0003AA   LBL3     WORD    123
-  7   0003AD            LDX     #INDEX
-  8   0003B0            END     TERMPROJ
+  6   0003AA   TOP      LDA     ZERO
+  7   0003AD   LBL3     WORD    123
+  8   0003B0            LDX     #INDEX
+  9   0003B3            END     TERMPROJ

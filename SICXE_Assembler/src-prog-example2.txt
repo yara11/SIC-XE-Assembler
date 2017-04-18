@@ -4,5 +4,5 @@
   4   00000A            STCH    STR2,X
   5   00000D            TIXR    T
   6   00000F            JLT     MOVECH
-         ***Error: mnemonic BYTE is undefined
-         ***Error: mnemonic RESB is undefined
+  7   000012   STR1     BYTE    C'TEST STRING'
+  8   00001C   STR2     RESB    11

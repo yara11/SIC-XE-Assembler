@@ -1,1 +1,13 @@
-TERMPROJ       0003a0LBL1       0003a0LBL2       0003a3TOP       0003a7LBL3       0003aa
+PALIND                 000000
+FIRST                  000000
+CLOOP                  000003
+LENGTH                 000019
+RDREC                  00001c
+RLOOP                  000026
+EXIT1                  00003c
+INPUT                  000042
+CMPREC                 000043
+EXIT2                  000062
+ERROR                  000068
+RESULT                 00006b
+BUFFER                 00006e
