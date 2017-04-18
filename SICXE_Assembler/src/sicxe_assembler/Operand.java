@@ -1,7 +1,7 @@
 package sicxe_assembler;
 
 public class Operand {
-    private char type; // 'r' = register, 'l' = memory (label), 'v' = value
+    private char type; // 'r' = register, 'l' = label, 'v' = value
     private String name;
     
     public Operand(String name, SymbolTable symbolTable) {
@@ -12,9 +12,13 @@ public class Operand {
         else if(RegisterSet.isRegister(name)) {
             this.type = 'r';
         }
-        else if(symbolTable.isLabel(name)) {
+        else /*if(symbolTable.isLabel(name))*/ {
             this.type = 'l';
         }
+    }
+    
+    public String getName() {
+        return this.name;
     }
     
     public char getType() {

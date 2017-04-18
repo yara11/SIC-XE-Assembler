@@ -29,7 +29,7 @@ public class Line {
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
         this.code_line = code_line;
         this.line_no = last_line_no + 1;
-        this.address = Assembler.decToHex(LOCCTR.getLocation(), 6);
+        this.address = Assembler.decToHex(LOCCTR.getLocation(), 6).toUpperCase();
         if(code_line.charAt(0) == '.') {
             this.isComment = true;
             this.comment = code_line;
@@ -115,9 +115,14 @@ public class Line {
         }
         int rNum = 0, lNum = 0, vNum = 0;
         for(int i = 0; i < operands.size(); i++) {
+            /*
             if(!Operand.isValid(operands.get(i), symbolTable)) {
                 this.error_message = String.format("***Error: Undefined operand %s", operands.get(i));
                 return false;
+            } 
+            */
+            if(i == operands.size()-1 && operands.get(i).toUpperCase().equals("X")) {
+                continue;
             }
             char opType = (new Operand(operands.get(i), symbolTable)).getType();
             switch (opType) {
@@ -145,10 +150,10 @@ public class Line {
     private Boolean validateNewLabel(String lbl, SymbolTable symbolTable) {
         if(lbl == null)
             return true;
-        return !(Character.isDigit(lbl.charAt(0)) || symbolTable.isUsedLabel(lbl));
+        return !(Character.isDigit(lbl.charAt(0)) || symbolTable.isLabel(lbl));
     }
     
-    private String hamada(String str, int stt, int end) {
+    public static String hamada(String str, int stt, int end) {
         if(stt >= str.length()){
             return "";
         }
@@ -169,6 +174,18 @@ public class Line {
         return this.size;
     }
     
+    public Boolean validateOperands(SymbolTable symbolTable) {
+        ArrayList<Operand> operands = this.instr.getOperands();
+        for(int i = 0; i < operands.size(); i++) {
+            if(!Operand.isValid(operands.get(i).getName(), symbolTable)) {
+                this.isError = true;
+                this.error_message = String.format("***Error: Undefined operand %s", operands.get(i));
+                return false;
+            } 
+        }
+        return true;
+    }
+    
     @Override
     public String toString() {
         if(isComment) {
@@ -179,4 +196,9 @@ public class Line {
         }
         return String.format("%3d   %6s   %s", line_no, address, code_line);
     }
+    
+    public void unError() {
+        this.isError = false;
+    }
+    
 }

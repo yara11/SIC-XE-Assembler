@@ -18,7 +18,11 @@ public class SymbolTable {
         return SymTable.containsKey(symbol);
     }
     
-    public Boolean isUsedLabel(String symbol) {
-        return SymTable.get(symbol) != null;
+    public void removeSymbol(String symbol) {
+        SymTable.remove(symbol);
     }
+    
+    /*public Boolean isUsedLabel(String symbol) {
+        return SymTable.get(symbol) != null;
+    }*/
 }

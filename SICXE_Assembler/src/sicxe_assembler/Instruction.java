@@ -64,4 +64,8 @@ public class Instruction {
         public int getFormat() {
             return this.format;
         }
+
+    public ArrayList<Operand> getOperands() {
+        return this.operands;
+    }
 }

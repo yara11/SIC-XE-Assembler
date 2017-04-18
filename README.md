@@ -28,6 +28,8 @@ MISSING STUFF:
 - [ ] Displacement exceeds the limits in pc-relative and base-relative addressing mode
 
 ERRORS:
+- [x] Printing should be left-justified for each column except line no.
+//
 - [x] We should go over the labels before anything,
 	  they maybe declared at the end but used in preceding instructions.
-- [x] Printing should be left-justified for each column except line no.
+- [ ] What if the label's line had error after I used it?!!

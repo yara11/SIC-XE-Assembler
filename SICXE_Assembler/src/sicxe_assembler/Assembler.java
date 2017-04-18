@@ -23,18 +23,31 @@ public class Assembler {
     }
     
     public void pass1(String asmFileName, String outputSrcFileName) {
-        this.collectLabels(asmFileName);
+        //this.collectLabels(asmFileName);
         // Load source code file
         int line_no = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(asmFileName))) {
             FileWriter fw = new FileWriter(outputSrcFileName);
             FileWriter symW = new FileWriter("SymbolTable.txt");
             String line;
+            int k = 0;
             while ((line = br.readLine()) != null) {
                 if(line.trim().isEmpty())
                     continue;
                 Line cur_line = new Line(line,LOCCTR,symbolTable,line_no);
                 linesOfCode.add(cur_line);
+                if(k == 0 && Line.hamada(line, 9, 14).toUpperCase().equals("START")) {
+                    int adrs = Integer.parseInt(Line.hamada(line, 17, 34).trim(), 16 );
+                    cur_line.unError();
+                    LOCCTR = new LocationCounter(adrs);
+                }
+                // TODO: VALIDATE "END OPERAND" OR "LABEL"
+                if(Line.hamada(line, 9, 14).toUpperCase().equals("END")) {
+                    cur_line.unError();
+                    fw.write(cur_line.toString() + '\n');
+                    System.out.println(cur_line.toString());
+                    break;
+                }
                 if(cur_line.isValid()) {
                     // Update symbol table
                     if(cur_line.getLabel() != null) {
@@ -47,6 +60,7 @@ public class Assembler {
                 }
                 fw.write(cur_line.toString() + '\n');
                 System.out.println(cur_line.toString());
+                k++;
             }
             br.close();
             fw.close();
@@ -56,9 +70,19 @@ public class Assembler {
         
     }
     
+    public void validateLabelswKeda() {
+        for(Line curLine: linesOfCode) {
+            if(!curLine.validateOperands(this.symbolTable)) {
+                this.symbolTable.removeSymbol(curLine.getLabel());
+            } else if(curLine.getLabel() != null) {
+                
+            }
+        }
+    }
+    
     // Because labels may be declared after they are used,
     // we need a way to save them before sgkzdjngldsin
-    private void collectLabels(String asmFileName) {
+    /*private void collectLabels(String asmFileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(asmFileName))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -70,7 +94,7 @@ public class Assembler {
             br.close();
         }catch (IOException e) {
         }
-    }
+    }*/
     
     // converts decimal int to hex string with specified number of digits
     public static String decToHex(int n, int digits) {
@@ -83,7 +107,7 @@ public class Assembler {
     
     
     public static void main(String[] args) {
-        String asmFileName = "example2.txt";
+        String asmFileName = "example.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);
