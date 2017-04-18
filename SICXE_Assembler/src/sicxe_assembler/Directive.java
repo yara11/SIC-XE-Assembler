@@ -1,5 +1,7 @@
 package sicxe_assembler;
-
+//validates directives
+//sets the size which changes the location counter by a certain value
+// validates the operand of the directive
 public class Directive {
     private String name;
     private String operand;
