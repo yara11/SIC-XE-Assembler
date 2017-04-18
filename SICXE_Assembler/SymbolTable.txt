@@ -1,1 +1,1 @@
-TERMPROJ       0003a0TOP       0003a0
+TERMPROJ       0003a0LBL1       0003a0LBL2       0003a3LBL2       0003a7TOP       0003aaLBL3       0003ad

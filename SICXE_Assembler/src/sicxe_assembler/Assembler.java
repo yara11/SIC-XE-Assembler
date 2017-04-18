@@ -40,6 +40,7 @@ public class Assembler {
                     int adrs = Integer.parseInt(Line.hamada(line, 17, 34).trim(), 16 );
                     cur_line.unError();
                     LOCCTR = new LocationCounter(adrs);
+                    cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
                 }
                 // TODO: VALIDATE "END OPERAND" OR "LABEL"
                 if(Line.hamada(line, 9, 14).toUpperCase().equals("END")) {

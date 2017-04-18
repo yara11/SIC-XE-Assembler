@@ -17,6 +17,7 @@ public class Line {
     private int line_no;
     private String address, label, comment;
     private Instruction instr;
+    private Directive dir;
     // Other stuff
     private int size = 0;
     private Boolean isComment = false, isError = false;
@@ -74,6 +75,14 @@ public class Line {
             
             /***     Get comment       ***/
             this.comment = hamada(code_line, 35, 65);
+            
+            /***     Check for directive      ***/
+            if(Directive.isDirective(mnemonic, operands_str)) {
+                this.dir = new Directive(mnemonic, operands_str);
+                this.size = this.dir.getSize();
+                // System.out.println("ok");
+                return;
+            }
             
             // System.out.println(label + " " + mnemonic + " " + operands + " " + comment);
             
@@ -199,6 +208,10 @@ public class Line {
     
     public void unError() {
         this.isError = false;
+    }
+    
+    public void setAddress(String addr) {
+        this.address = addr.toUpperCase();
     }
     
 }

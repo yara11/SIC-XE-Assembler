@@ -11,9 +11,9 @@ public class Directive {
         switch (name) {
             case "BYTE":
                 int n = this.operand.length();
-                if(name.charAt(0) == 'C')
+                if(operand.charAt(0) == 'C')
                     this.size = n - 3;
-                else if(name.charAt(0) == 'X')
+                else if(operand.charAt(0) == 'X')
                     this.size = n/2 - 1;
                 break;
             case "WORD":
@@ -31,19 +31,21 @@ public class Directive {
     }
     
     static Boolean isDirective(String name, String operand) {
-        String str = name.toUpperCase();
-        if(str.equals("RESW") || str.equals("RESB") || str.equals("WORD")) {
+        //String str = name.toUpperCase();
+        name = name.toUpperCase();
+        operand = operand.toUpperCase();
+        if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        else if(str.equals("BYTE")) {
-            if(str.length() < 3 ||  str.charAt(1) != '\'' ||str.charAt(str.length()-1) != '\'')
+        else if(name.equals("BYTE")) {
+            if(operand.length() < 3 ||  operand.charAt(1) != '\'' ||operand.charAt(operand.length()-1) != '\'')
                 return false;
             
-            switch (str.charAt(0)) {
+            switch (operand.charAt(0)) {
                 case 'C':
                     return true;
                 case 'X':
-                    return isNumber(str.substring(2, str.length() - 1));
+                    return isNumber(operand.substring(2, operand.length() - 1));
                 default:
                     return false;
             }
@@ -53,7 +55,7 @@ public class Directive {
     
     static Boolean isDecimal(String str) {
         for(int i = 0; i < str.length(); i++)
-            if(Character.isDigit(str.charAt(i)))
+            if(!Character.isDigit(str.charAt(i)))
                 return false;
         return true;
     }
