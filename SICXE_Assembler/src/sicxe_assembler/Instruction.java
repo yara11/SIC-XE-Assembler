@@ -1,5 +1,8 @@
 package sicxe_assembler;
 import java.util.ArrayList;
+//building the instruction flags to be used for object code
+//creating instruction objects
+//checking indexed
 
 public class Instruction {
     // Missing: How to set b & p

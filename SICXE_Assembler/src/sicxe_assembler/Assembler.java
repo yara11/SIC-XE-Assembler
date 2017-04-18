@@ -73,7 +73,7 @@ public class Assembler {
     public void validateLabelswKeda() {
         for(Line curLine: linesOfCode) {
             if(!curLine.validateOperands(this.symbolTable)) {
-                this.symbolTable.removeSymbol(curLine.getLabel());
+              //  this.symbolTable.removeSymbol(curLine.getLabel());
             } else if(curLine.getLabel() != null) {
                 
             }

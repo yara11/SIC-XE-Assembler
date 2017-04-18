@@ -17,11 +17,13 @@ public class SymbolTable {
     public Boolean isLabel(String symbol) {
         return SymTable.containsKey(symbol);
     }
-    
+    //
+    //elmfrood msh hn7tagha delwa2ty
+    /*
     public void removeSymbol(String symbol) {
         SymTable.remove(symbol);
     }
-    
+    */
     /*public Boolean isUsedLabel(String symbol) {
         return SymTable.get(symbol) != null;
     }*/

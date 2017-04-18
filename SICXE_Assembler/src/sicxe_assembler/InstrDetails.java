@@ -1,9 +1,11 @@
 package sicxe_assembler;
+//these are the details read fron instruction file
 
 // Used for:
 // Validation, 
 // get opcode for object code,
 // get format for LOCCTR
+//printing instruction details for debugging
 public class InstrDetails {
     private String mnemonic, opcode;
     private int format, memOps, regOps, dirOps;

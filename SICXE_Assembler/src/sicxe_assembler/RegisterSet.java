@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 // Another Singleton class for the RegisterSet
+//reading register set from file
 
 public class RegisterSet {
     private static RegisterSet regSetObj = null;

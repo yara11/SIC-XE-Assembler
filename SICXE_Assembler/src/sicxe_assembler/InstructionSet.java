@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 // Singleton class InstructionSet to ensure we only have one object :D
-
+//reading instruction set and putting them in a hashmap
 public class InstructionSet {
     private static InstructionSet instrSetObj = null;
     private static HashMap<String,InstrDetails> InstrSet = new HashMap<>();

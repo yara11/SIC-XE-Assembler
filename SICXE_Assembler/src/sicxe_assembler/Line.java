@@ -12,6 +12,12 @@ package sicxe_assembler;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//dividing the line into label mnemonic operands and comment
+// setting i and n flags
+//dividing the list of operands
+//first checking for directives if not validating instruction
+//validating label and operands
+
 public class Line {
     // Line stuff
     private int line_no;

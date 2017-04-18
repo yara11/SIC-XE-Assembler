@@ -15,4 +15,7 @@ public class LocationCounter {
     public int getLocation() {
         return this.current_loc;
     }
+    public void setLocation(int location) {
+        this.current_loc = location;
+    }
 }

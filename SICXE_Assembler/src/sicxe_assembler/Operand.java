@@ -1,5 +1,6 @@
 package sicxe_assembler;
 
+// validating operands
 public class Operand {
     private char type; // 'r' = register, 'l' = label, 'v' = value
     private String name;
