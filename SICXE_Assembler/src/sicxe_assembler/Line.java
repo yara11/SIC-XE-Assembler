@@ -69,20 +69,11 @@ public class Line {
                 }
             }
             if(operands_str != null) {
-                operands = new ArrayList(Arrays.asList(operands_str.split(",")));
-                
+                operands = new ArrayList(Arrays.asList(operands_str.split(",")));   
             }
             
             /***     Get comment       ***/
             this.comment = hamada(code_line, 35, 65);
-            
-            /***     Check for directive      ***/
-            if(Directive.isDirective(mnemonic, operands_str)) {
-                this.dir = new Directive(mnemonic, operands_str);
-                this.size = this.dir.getSize();
-                // System.out.println("ok");
-                return;
-            }
             
             // System.out.println(label + " " + mnemonic + " " + operands + " " + comment);
             
@@ -92,6 +83,15 @@ public class Line {
                 this.isError = true;
                 this.error_message = String.format("***Error: Symbol %s is already defined.", this.label);
             }
+            
+            /***     Check for directive      ***/
+            if(Directive.isDirective(mnemonic, operands_str)) {
+                this.dir = new Directive(mnemonic, operands_str);
+                this.size = this.dir.getSize();
+                // System.out.println("ok");
+                return;
+            }
+            
             // Validate mnemonic
             else if(InstructionSet.getInstruction(mnemonic) == null) {
                 this.isError = true;
