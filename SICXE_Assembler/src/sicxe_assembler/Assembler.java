@@ -107,7 +107,7 @@ public class Assembler {
     
     
     public static void main(String[] args) {
-        String asmFileName = "example3.txt";
+        String asmFileName = "example4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);
