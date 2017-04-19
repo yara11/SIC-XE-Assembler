@@ -25,6 +25,9 @@ public class Directive {
             case "RESW":
                 this.size = 3 * Integer.parseInt(operand.trim());
                 break;
+            case "BASE":
+                this.size = 0;
+                break;
             default:
                 break;
         }
@@ -36,6 +39,9 @@ public class Directive {
         operand = operand.toUpperCase();
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
+        }
+        else if(name.equals("BASE")){
+            return true;
         }
         else if(name.equals("BYTE")) {
             if(operand.length() < 3 ||  operand.charAt(1) != '\'' ||operand.charAt(operand.length()-1) != '\'')
