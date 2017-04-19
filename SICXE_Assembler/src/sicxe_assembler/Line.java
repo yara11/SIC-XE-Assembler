@@ -12,6 +12,12 @@ package sicxe_assembler;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//dividing the line into label mnemonic operands and comment
+// setting i and n flags
+//dividing the list of operands
+//first checking for directives if not validating instruction
+//validating label and operands
+
 public class Line {
     // Line stuff
     private int line_no;
@@ -25,8 +31,7 @@ public class Line {
     // just keep it for printing
     private String code_line;
     
-    // TODO: Any extras should be done for directives?
-    // **** UNHANDELED: Directives, literals, etc...
+    // **** UNHANDELED: BASE, literals
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
         this.code_line = code_line;
         this.line_no = last_line_no + 1;
@@ -68,7 +73,7 @@ public class Line {
                     operands_str = operands_str.substring(1);
                 }
             }
-            if(operands_str != null) {
+            if(operands_str != null && operands_str.length() > 0) {
                 operands = new ArrayList(Arrays.asList(operands_str.split(",")));   
             }
             
@@ -122,6 +127,7 @@ public class Line {
         if(instrDetails.getFormat() < 3 && (isFormat4 || isImm || isIndir)){
             return false;
         }
+        this.size = instrDetails.getFormat();
         int rNum = 0, lNum = 0, vNum = 0;
         for(int i = 0; i < operands.size(); i++) {
             /*
@@ -130,7 +136,7 @@ public class Line {
                 return false;
             } 
             */
-            if(i == operands.size()-1 && operands.get(i).toUpperCase().equals("X")) {
+            if(instrDetails.getFormat() != 2 && i == operands.size()-1 && operands.get(i).toUpperCase().equals("X")) {
                 continue;
             }
             char opType = (new Operand(operands.get(i), symbolTable)).getType();
@@ -200,10 +206,11 @@ public class Line {
         if(isComment) {
             return String.format("%3d   %6s   %-66s", line_no, address, comment);
         }
+        String ret = String.format("%3d   %6s   %s", line_no, address, code_line);
         if(isError) {
-            return String.format("%9s%s", "", error_message);
+            ret += '\n' + String.format("%9s%s", "", error_message);
         }
-        return String.format("%3d   %6s   %s", line_no, address, code_line);
+        return ret;
     }
     
     public void unError() {
@@ -214,4 +221,13 @@ public class Line {
         this.address = addr.toUpperCase();
     }
     
+    public String getObjectCode(SymbolTable symbolTable) {
+        if(this.isError) {
+            return null;
+        }
+        if(this.dir != null) {  // if isDirective()
+            return dir.getObjectCode();
+        }
+        return instr.getObjectCode(symbolTable);
+    }
 }
