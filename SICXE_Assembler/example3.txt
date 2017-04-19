@@ -1,5 +1,7 @@
 PALIND   START   0
 FIRST    LDB     #1
+         Base    LENGTH
+
 CLOOP    +JSUB   RDREC
          LDA     LENGTH
          COMP    #0
