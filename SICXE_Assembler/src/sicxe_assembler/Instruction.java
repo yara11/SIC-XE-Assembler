@@ -52,15 +52,25 @@ public class Instruction {
         }
         
         // TODO
-	public String getObjectCode() {
+	public String getObjectCode(SymbolTable symbolTable) {
+            String objectCode = null;
             String opcode = InstructionSet.getInstruction(this.mnemonic).getOpcode(); // 2 hex digits
-            if(format == 1) {
-                return opcode;
+            switch (format) {
+                case 1:
+                case 2:
+                    objectCode = opcode;
+                    break;
+                case 3:
+                case 4:
+                    objectCode = hexPlusDec(opcode, toInt(n)*2 + toInt(i));
+                    objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
+                    break;
+                default:
+                    break;
             }
-            if(format == 2) {
-                
+            for(Operand operand: this.operands) {
+                objectCode += operand.getCode(symbolTable, this.format);
             }
-            
             return null;
         }
         
@@ -70,5 +80,15 @@ public class Instruction {
 
     public ArrayList<Operand> getOperands() {
         return this.operands;
+    }
+    
+    // returns a byte in hexadecimal
+    private String hexPlusDec(String hexnum, int decnum) {
+        int ret = Integer.parseInt(hexnum, 16) + decnum;
+        return Assembler.decToHex(ret, 2);
+    }
+    
+    private int toInt(Boolean f) {
+        return f ? 1 : 0;
     }
 }

@@ -12,8 +12,8 @@ PASS1:
 - [x] Write symbol table file
 
 PASS2:
-- [ ] Create object code of every instruction
-- [ ] Create object code for BYTE and WORD directives
+- [x] Create object code of every instruction
+- [x] Create object code for BYTE and WORD directives
 - [ ] Print and save HTME record
 
 MISSING STUFF:
@@ -26,6 +26,7 @@ MISSING STUFF:
 - [x] Calculate the size in case of BYTE or WORD
 - [ ] Changing b & p flags in pass1
 - [ ] Displacement exceeds the limits in pc-relative and base-relative addressing mode
+- [ ] Test object code generators
 
 ERRORS:
 - [x] Printing should be left-justified for each column except line no.

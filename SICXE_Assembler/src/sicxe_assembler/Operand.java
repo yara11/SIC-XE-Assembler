@@ -27,10 +27,10 @@ public class Operand {
     }
     
     public static Boolean isValid(String str, SymbolTable symbolTable) {
-        return isNumber(str) || RegisterSet.isRegister(str) || symbolTable.isLabel(str);
+        return isDecimal(str) || RegisterSet.isRegister(str) || symbolTable.isLabel(str);
     }
     
-    private static Boolean isNumber(String str) {
+    private Boolean isNumber(String str) {
         if(str == null || str.length() == 0)
             return false;
         if(!Character.isDigit(str.charAt(0)))
@@ -41,5 +41,28 @@ public class Operand {
                 return false;
         }
         return true;
+    }
+    
+    private static Boolean isDecimal(String str) {
+        for(int i = 0; i < str.length(); i++)
+            if(!Character.isDigit(str.charAt(i)))
+                return false;
+        return true;
+    }
+    
+    public String getCode(SymbolTable symbolTable, int format) {
+        switch (this.type) {
+            case 'r':
+                return RegisterSet.getRegCode(this.name);
+            case 'v':
+                return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
+            default:
+                String loc = symbolTable.getLocation(this.name);
+                if(loc == null) // TODO: return null instead to mark error in pass2?
+                    loc = "000000";
+                if(format == 3)
+                    return loc.substring(3);
+                return loc.substring(1);
+        }
     }
 }

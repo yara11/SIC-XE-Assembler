@@ -31,8 +31,7 @@ public class Line {
     // just keep it for printing
     private String code_line;
     
-    // TODO: Any extras should be done for directives?
-    // **** UNHANDELED: Directives, literals, etc...
+    // **** UNHANDELED: BASE, literals
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
         this.code_line = code_line;
         this.line_no = last_line_no + 1;
@@ -222,4 +221,13 @@ public class Line {
         this.address = addr.toUpperCase();
     }
     
+    public String getObjectCode(SymbolTable symbolTable) {
+        if(this.isError) {
+            return null;
+        }
+        if(this.dir != null) {  // if isDirective()
+            return dir.getObjectCode();
+        }
+        return instr.getObjectCode(symbolTable);
+    }
 }
