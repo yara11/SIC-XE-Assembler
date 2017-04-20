@@ -59,7 +59,9 @@ public class Operand {
             case 'v':
                 return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
             default:
-                String loc = symbolTable.getLocation(this.name);
+                String loc = symbolTable.getLocation(name);
+                //System.out.print("target  "+Assembler.target);
+                //System.out.print(loc);
                 return loc;
                 /*if(loc == null) // TODO: return null instead to mark error in pass2?
                     loc = "000000";

@@ -3,11 +3,13 @@ FIRST    LDT     #1
          LDS     #10
          +JSUB   RDREC
          +JSUB   WRREC
+         COMPR    A,S
+         CLEAR    S
 LENGTH   RESW    1
 .
 . SUBROUTINE RDREC
 .
-RDREC    CLEAR   A
+RDREC    CLEAR   A  
 RLOOP    TD      INPUT
          JEQ     RLOOP
          RD      INPUT

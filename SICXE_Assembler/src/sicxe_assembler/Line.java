@@ -20,6 +20,8 @@ import java.util.Arrays;
 
 public class Line {
 
+    
+
     public Instruction getInstr() {
         return instr;
     }
@@ -71,6 +73,7 @@ public class Line {
     private String error_message = null;
     // just keep it for printing
     private String code_line;
+    static Boolean isImm = false, isIndir = false;
     
     // **** UNHANDELED: BASE, literals
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
@@ -93,7 +96,7 @@ public class Line {
             String mnemonic = null;
             ArrayList<String>operands = new ArrayList<>();
             Boolean isFormat4 = false;
-            Boolean isImm = false, isIndir = false;
+            
             
             // Get the mnemonic
             mnemonic = hamada(code_line, 9, 14);
@@ -272,6 +275,10 @@ public class Line {
         if(this.isError || this.isComment) {
             return " ";
         }
+        if(isImm == true){
+            Assembler.setB(false);
+            Assembler.setP(false);
+        }
         if(this.dir != null) {  // if isDirective()
            // System.out.println("testline");
             return dir.getObjectCode(symbolTable);
@@ -280,4 +287,17 @@ public class Line {
         String str = instr.getObjectCode(symbolTable);
         return str;
     }
+
+    
+    public Boolean getIsComment() {
+        return isComment;
+    }
+
+    public Boolean getIsError() {
+        return isError;
+    }
+
+   
+
+   
 }

@@ -160,12 +160,6 @@ public class Assembler {
             Line line = linesOfCode.get(i);
             
             
-            
-            
-            String s = line.getObjectCode(symbolTable);
-            String ret = String.format("%3d   %6s   %s      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
-            System.out.println(ret);
-            
             if(baseCounter < baseLines.size() &&line.getLine_no() == baseLines.get(baseCounter).getLine_no()){
                 //System.out.println("test");
                 enableBase = true;
@@ -173,28 +167,40 @@ public class Assembler {
                 //System.out.println(base);
                 baseCounter++;
             }
-            String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
-            System.out.print(" operand "+s1);
-            int TA = Integer.parseInt(s1);
-            System.out.print(TA);
-                int current = Integer.parseInt(linesOfCode.get(i+1).getAddress());
+            ArrayList<Operand> op = new ArrayList<>();
+            if(line.getIsError() == false && line.getIsComment() == false && line.getInstr()!= null){
+              op = line.getInstr().getOperands();    
+              if(op.get(0).getType()=='l'){
+                  String l = op.get(0).getName();
+              
+             // System.out.print(" operand "+l);
+              String n = symbolTable.getLocation(l);
+               //           System.out.println(" location "+n);
+                int TA = hex2dec(n);
+              //System.out.println("target address  "+TA);
+                int current = hex2dec(linesOfCode.get(i+1).getAddress());
+               // System.out.print("current " + current);
                 target = TA - current;
-            if(enableBase == false){
-                b = false;
-                p = true;
-                //continue;
-            }
-            else{
-                
-                if((TA - current) <=2047 && (TA - current) >= -2048){
-                    b = false;
-                    p = true;
+                setBP(target);
+                if(b == false && p == false){
+                    target = TA;
                 }
-                else if((TA - current) <=4096 && (TA - current) >= 0) {
-                    b = true;
-                    p = false;
+                else if(b == true && p == false){
+                    target = TA - base;
                 }
-            }
+              }    
+             }
+            
+            String s = line.getObjectCode(symbolTable);
+            String ret = String.format("%3d   %6s   %s      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
+            System.out.println(ret);
+           // String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
+            //System.out.print(" operand "+s1);
+            //int TA = Integer.parseInt(s1);
+            //System.out.print(TA);
+              //  int current = Integer.parseInt(linesOfCode.get(i+1).getAddress());
+                //target = TA - current;
+            
             
            i++;
         }
@@ -202,10 +208,40 @@ public class Assembler {
     
     }
     
+    public static int hex2dec(String s) {
+             String digits = "0123456789ABCDEF";
+             s = s.toUpperCase();
+             int val = 0;
+             for (int i = 0; i < s.length(); i++) {
+                 char c = s.charAt(i);
+                 int d = digits.indexOf(c);
+                 val = 16*val + d;
+             }
+             return val;
+         }
+    public static void setBP(int target){
+        if(enableBase == false){
+                b = false;
+                p = true;
+                //continue;
+            }
+            else{
+                
+                if((target) <=2047 && (target) >= -2048){
+                    b = false;
+                    p = true;
+                }
+                else if((target) <=4096 && (target) >= 0) {
+                    b = true;
+                    p = false;
+                }
+    }
+    }
+    
     
    
     public static void main(String[] args) {
-        String asmFileName = "example4.txt";
+        String asmFileName = "example.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);

@@ -1,11 +1,6 @@
-FIBO                   000000
-FIRST                  000000
-LENGTH                 00000e
-RDREC                  000011
-RLOOP                  000013
-INPUT                  00002c
-WRREC                  00002d
-WLOOP                  000039
-OUTPUT                 000055
-VALUE1                 000056
-VALUE2                 000059
+TERMPROJ               0003a0
+LBL3                   0003a4
+LBL1                   0003a7
+LBL2                   0003aa
+LBL4                   0003ae
+TOP                    0003b3

@@ -96,17 +96,20 @@ public class Instruction {
                     objectCode += decToHex(toint(x),toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                                        // System.out.println("test1");
                     for(Operand operand: this.operands) {
-                        objectCode += operand.getCode(symbolTable, this.format);
+                        objectCode += operand.getCode(symbolTable, this.format).substring(3);
                         
                     
                     }
                     break;
                 case 4:
+                    //Assembler.setB(false);
+                    //Assembler.setP(false);
                     objectCode = hexPlusDec(opcode, toInt(n)*2 + toInt(i));
                     objectCode += decToHex(toint(x),toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                     //objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
                     for(Operand operand: this.operands) {
-                        objectCode += operand.getCode(symbolTable, this.format);
+                        objectCode+= "op";
+                        objectCode += operand.getCode(symbolTable, 4).substring(1);
                         
                     
                     }
