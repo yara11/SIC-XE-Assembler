@@ -155,7 +155,7 @@ public class Assembler {
     
     public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
         int i=0;
-        while(i<= linesOfCode.size()){
+        while(i < linesOfCode.size()){
             
             Line line = linesOfCode.get(i);
             
@@ -209,6 +209,8 @@ public class Assembler {
     }
     
     public static int hex2dec(String s) {
+            if(s == null)
+                return 0;
              String digits = "0123456789ABCDEF";
              s = s.toUpperCase();
              int val = 0;
@@ -241,7 +243,7 @@ public class Assembler {
     
    
     public static void main(String[] args) {
-        String asmFileName = "example.txt";
+        String asmFileName = "example4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);
