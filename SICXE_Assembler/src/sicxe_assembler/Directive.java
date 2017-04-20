@@ -3,6 +3,14 @@ package sicxe_assembler;
 public class Directive {
     private String name;
     private String operand;
+
+    public String getOperand() {
+        return operand;
+    }
+
+    public void setOperand(String operand) {
+        this.operand = operand;
+    }
     private int size;
     
     public Directive(String name, String operand) {
@@ -20,14 +28,12 @@ public class Directive {
                 this.size = 3;
                 break;
             case "RESB":
-                this.size = 1 * Integer.parseInt(operand.trim());
+                this.size = Integer.parseInt(operand.trim());
                 break;
             case "RESW":
                 this.size = 3 * Integer.parseInt(operand.trim());
                 break;
-            case "BASE":
-                this.size = 0;
-                break;
+           
             default:
                 break;
         }
@@ -40,7 +46,7 @@ public class Directive {
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        else if(name.equals("BASE")){
+        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equals("END")){
             return true;
         }
         else if(name.equals("BYTE")) {
@@ -80,4 +86,31 @@ public class Directive {
     }
     return true;
 }
+    
+    
+    public String getObjectCode(SymbolTable symbolTable) {
+                    //System.out.println("test2");
+
+        switch(name){
+            case "START":
+                return "5357";
+            case "END":
+                return "        ";
+            case "RESW":
+                return " ";
+            case "RESB":
+                return "        ";
+            case "BYTE":
+                int n = this.operand.length();
+                if(operand.charAt(0) == 'X'){
+                    return operand.substring(2, operand.length()-1);
+                }
+            //TODO: char
+            case "WORD":
+                return Assembler.decToHex(Integer.parseInt(operand), 6);
+        }
+    
+    
+        return null;
+    }
 }

@@ -1,0 +1,1 @@
+PALIND   START   1000

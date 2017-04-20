@@ -1,10 +1,12 @@
   1   0003A0   TERMPROJ START   3A0
-  2   0003A0   .THIS IS A COMMENT LINE                                           
-  3   0003A0   LBL1     BYTE    X'ABCDEF'
-  4   0003A3   LBL2     RESB    4
-  5   0003A7   LBL2     RESW    1
-         ***Error: Symbol LBL2 is already defined.
-  6   0003AA   TOP      LDA     ZERO
-  7   0003AD   LBL3     WORD    123
-  8   0003B0            LDX     #INDEX
-  9   0003B3            END     TERMPROJ
+  2   0003A0            COMPR   A,S
+  3   0003A2            CLEAR   S
+  4   0003A4   LBL3     WORD    123
+  5   0003A7   .THIS IS A COMMENT LINE                                           
+  6   0003A7   LBL1     BYTE    X'ABCDEF'
+  7   0003AA   LBL2     RESB    4
+  8   0003AE   LBL4     RESW    1
+  9   0003B1            CLEAR   S
+ 10   0003B3   TOP      LDA     LBL3
+ 11   0003B6            LDX     #INDEX
+ 12   0003B9            END     TERMPROJ

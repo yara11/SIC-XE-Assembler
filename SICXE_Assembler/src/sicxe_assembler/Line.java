@@ -19,11 +19,52 @@ import java.util.Arrays;
 //validating label and operands
 
 public class Line {
+
+    public Instruction getInstr() {
+        return instr;
+    }
     // Line stuff
     private int line_no;
+
+    public int getLine_no() {
+        return line_no;
+    }
+
+    public void setLine_no(int line_no) {
+        this.line_no = line_no;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getCode_line() {
+        return code_line;
+    }
+
+    public void setCode_line(String code_line) {
+        this.code_line = code_line;
+    }
     private String address, label, comment;
+
+    public String getAddress() {
+        return address;
+    }
     private Instruction instr;
-    private Directive dir;
+    public Directive dir;
+
+    public Directive getDir() {
+        return dir;
+    }
+    
+
+    public void setDir(Directive dir) {
+        this.dir = dir;
+    }
     // Other stuff
     private int size = 0;
     private Boolean isComment = false, isError = false;
@@ -66,6 +107,8 @@ public class Line {
             String operands_str = hamada(code_line, 17, 34);
             if(operands_str.length() > 0) {
                 if(operands_str.charAt(0) == '#'){
+                    Assembler.setB(false);
+                    Assembler.setP(false);
                     isImm = true;
                     operands_str = operands_str.substring(1);
                 } else if(operands_str.charAt(0) == '@'){
@@ -212,6 +255,10 @@ public class Line {
         }
         return ret;
     }
+    public String baseString(){
+        String ret = String.format("%3d            %s", line_no, code_line);
+        return ret;
+    }
     
     public void unError() {
         this.isError = false;
@@ -222,12 +269,15 @@ public class Line {
     }
     
     public String getObjectCode(SymbolTable symbolTable) {
-        if(this.isError) {
-            return null;
+        if(this.isError || this.isComment) {
+            return " ";
         }
         if(this.dir != null) {  // if isDirective()
-            return dir.getObjectCode();
+           // System.out.println("testline");
+            return dir.getObjectCode(symbolTable);
         }
-        return instr.getObjectCode(symbolTable);
+        //System.out.println("testline");
+        String str = instr.getObjectCode(symbolTable);
+        return str;
     }
 }

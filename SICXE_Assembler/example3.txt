@@ -1,7 +1,12 @@
 PALIND   START   0
-FIRST    LDB     #1
          Base    LENGTH
-
+.ERROR    RSUB
+RESULT   RESW    1
+.         CLEAR   A
+.         CLEAR   S
+         Base    RLOOP
+LENGTH   RESW    1
+FIRST    LDB     #1
 CLOOP    +JSUB   RDREC
          LDA     LENGTH
          COMP    #0
@@ -9,7 +14,7 @@ CLOOP    +JSUB   RDREC
          LDT     #LENGTH
          SUBR    B,T
          +JSUB   CMPREC
-LENGTH   RESW    1
+
 .
 . SUBROUTINE READ RECORD
 .
@@ -45,7 +50,6 @@ CMPREC   CLEAR   A
          JGT     ERROR
 EXIT2    LDA     #1
          STA     RESULT
-ERROR    RSUB
-RESULT   RESW    1
+
 BUFFER   RESB    4096
          END     FIRST

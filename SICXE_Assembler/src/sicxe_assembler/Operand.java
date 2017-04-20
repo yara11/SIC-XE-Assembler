@@ -54,15 +54,18 @@ public class Operand {
         switch (this.type) {
             case 'r':
                 return RegisterSet.getRegCode(this.name);
+            case ' ':
+                return "0000";
             case 'v':
                 return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
             default:
                 String loc = symbolTable.getLocation(this.name);
-                if(loc == null) // TODO: return null instead to mark error in pass2?
+                return loc;
+                /*if(loc == null) // TODO: return null instead to mark error in pass2?
                     loc = "000000";
                 if(format == 3)
                     return loc.substring(3);
-                return loc.substring(1);
+                return loc.substring(1);*/
         }
     }
 }

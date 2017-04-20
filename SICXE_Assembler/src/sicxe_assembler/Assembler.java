@@ -9,11 +9,35 @@ import java.util.ArrayList;
 public class Assembler {
     private final String regFileName = "register_set.txt";
     private final String instrSetFileName = "instruction_set.txt";
+    private static Boolean b,p;
+    public static int target;
+
+    public static Boolean getB() {
+        //System.out.print("oide");
+        return b;
+    }
+
+    public static void setB(Boolean b) {
+        Assembler.b = b;
+    }
+
+    public static void setP(Boolean p) {
+        Assembler.p = p;
+    }
+
+    public static Boolean getP() {
+        return p;
+    }
     // private String asmFileName;
     private ArrayList<Line> linesOfCode = new ArrayList<>();
-    private SymbolTable symbolTable = new SymbolTable();
+    private static SymbolTable symbolTable = new SymbolTable();
     private LocationCounter LOCCTR = new LocationCounter(0);
-    
+    private static boolean enableBase = false;
+    private static int base;
+    //private static String baseLine;
+    private static boolean baseError = false;
+    private static ArrayList<Line> baseLines = new ArrayList<>();
+    private static int baseCounter = 0;
     public Assembler() {
         // Load the registers file
         RegisterSet.getInstance(regFileName);
@@ -40,6 +64,7 @@ public class Assembler {
                     cur_line.unError();
                     LOCCTR = new LocationCounter(adrs);
                     cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
+                    //System.out.print(cur_line.getObjectCode(symbolTable));
                 }
                 // TODO: VALIDATE "END OPERAND" OR "LABEL"
                 if(Line.hamada(line, 9, 14).toUpperCase().equals("END")) {
@@ -47,6 +72,16 @@ public class Assembler {
                     fw.write(cur_line.toString() + '\n');
                     System.out.println(cur_line.toString());
                     break;
+                }
+                // TODO: add nobase
+                if(Line.hamada(line, 9, 14).toUpperCase().equals("BASE")){
+                    cur_line.unError();
+                    baseLines.add(cur_line);
+                    //enableBase = true;
+                    fw.write(cur_line.baseString() + '\n');
+                    System.out.println(cur_line.baseString());
+                    line_no++;
+                    continue;
                 }
                 if(cur_line.isValid()) {
                     // Do we need this?
@@ -104,13 +139,82 @@ public class Assembler {
             hex_num = '0' + hex_num;
         return hex_num;
     }
+    public static int getBaseValue(int baseCounter){
+        //System.out.println("test");
+        String str = baseLines.get(baseCounter).getDir().getOperand();
+        //System.out.print(str);
+        if(symbolTable.isLabel(str) == null){
+            baseError = true;
+        }
+        else{
+            return Integer.parseInt(symbolTable.getLocation(str));
+        }
+            
+        return 0;
+    }
+    
+    public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
+        int i=0;
+        while(i<= linesOfCode.size()){
+            
+            Line line = linesOfCode.get(i);
+            
+            
+            
+            
+            String s = line.getObjectCode(symbolTable);
+            String ret = String.format("%3d   %6s   %s      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
+            System.out.println(ret);
+            
+            if(baseCounter < baseLines.size() &&line.getLine_no() == baseLines.get(baseCounter).getLine_no()){
+                //System.out.println("test");
+                enableBase = true;
+                base = getBaseValue(baseCounter);
+                //System.out.println(base);
+                baseCounter++;
+            }
+            String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
+            System.out.print(" operand "+s1);
+            int TA = Integer.parseInt(s1);
+            System.out.print(TA);
+                int current = Integer.parseInt(linesOfCode.get(i+1).getAddress());
+                target = TA - current;
+            if(enableBase == false){
+                b = false;
+                p = true;
+                //continue;
+            }
+            else{
+                
+                if((TA - current) <=2047 && (TA - current) >= -2048){
+                    b = false;
+                    p = true;
+                }
+                else if((TA - current) <=4096 && (TA - current) >= 0) {
+                    b = true;
+                    p = false;
+                }
+            }
+            
+           i++;
+        }
+     
+    
+    }
     
     
+   
     public static void main(String[] args) {
         String asmFileName = "example4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         assembler.pass1(asmFileName, srcCodeFileName);
+        //ToDo: nzabat mkanha fein
+        if(enableBase == true){
+            base = getBaseValue(baseCounter);
+        }
+        //System.out.print(base);
+        assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }

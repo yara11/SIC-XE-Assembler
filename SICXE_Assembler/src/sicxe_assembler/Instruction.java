@@ -8,7 +8,25 @@ public class Instruction {
     // Missing: How to set b & p
 	private int format;
 	private String mnemonic;
-        private Boolean n, i, x, b, p, e;
+        private Boolean n, i, b, p;
+        private Boolean x = false;
+        private Boolean e = false;
+
+    public Boolean getB() {
+        return b;
+    }
+
+    public void setB(Boolean b) {
+        this.b = b;
+    }
+
+    public Boolean getP() {
+        return p;
+    }
+
+    public void setP(Boolean p) {
+        this.p = p;
+    }
         private ArrayList<Operand> operands = new ArrayList<>();
         
         // Constructor for format 1
@@ -57,21 +75,49 @@ public class Instruction {
             String opcode = InstructionSet.getInstruction(this.mnemonic).getOpcode(); // 2 hex digits
             switch (format) {
                 case 1:
-                case 2:
                     objectCode = opcode;
                     break;
+                case 2:
+                    objectCode = opcode;
+                    objectCode +=this.operands.get(0).getCode(symbolTable, 2);
+                    if(this.operands.size()== 1){
+                        objectCode += "0";
+                        break;
+                    }
+                    objectCode +=this.operands.get(1).getCode(symbolTable, 2);
+
+                    break;
                 case 3:
+                   //System.out.println("test1");
+                    objectCode = hexPlusDec(opcode, toInt(n)*2 + toInt(i));
+                                        //System.out.println("test1");
+                                        Boolean a = true;
+                    //objectCode += this.toint(a);
+                    objectCode += decToHex(toint(x),toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
+                                       // System.out.println("test1");
+                    for(Operand operand: this.operands) {
+                        objectCode += operand.getCode(symbolTable, this.format);
+                        
+                    
+                    }
+                    break;
                 case 4:
                     objectCode = hexPlusDec(opcode, toInt(n)*2 + toInt(i));
-                    objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
+                    objectCode += decToHex(toint(x),toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
+                    //objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
+                    for(Operand operand: this.operands) {
+                        objectCode += operand.getCode(symbolTable, this.format);
+                        
+                    
+                    }
                     break;
                 default:
                     break;
             }
-            for(Operand operand: this.operands) {
+            /*for(Operand operand: this.operands) {
                 objectCode += operand.getCode(symbolTable, this.format);
-            }
-            return null;
+            }*/
+            return objectCode;
         }
         
         public int getFormat() {
@@ -90,5 +136,55 @@ public class Instruction {
     
     private int toInt(Boolean f) {
         return f ? 1 : 0;
+    }
+    private char toint(Boolean f){
+        if (f == null)
+            return '2';
+        if(f== true)
+            return '1';
+        else return'0';
+    }
+    private String decToHex(char a, char b, char c, char d){
+        int A = (int)a - '0';
+       // System.out.print(A);
+        int B = b-'0';
+             //   System.out.print(B);
+
+        int C = c-'0';
+             //   System.out.print(C);
+
+        int D = d-'0';
+              //  System.out.print(D);
+
+        int res = 8*A + 4*B + 2*C + D;
+                     //   System.out.println(" result here "+res);
+
+        String str;
+        switch(res){
+            case 10:
+                str = "A";
+                break;
+            case 11:
+                str = "B";
+                break;
+            case 12:
+                str = "C";
+                break;
+            case 13:
+                str = "D";
+                break;
+            case 14:
+                str = "E";
+                break;
+            case 15:
+                str = "F";
+                break;
+            default:
+                str = String.valueOf(res);
+        }
+        return str;
+                
+        
+        
     }
 }
