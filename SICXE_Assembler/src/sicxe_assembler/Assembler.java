@@ -158,6 +158,8 @@ public class Assembler {
     }
 
     public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
+        
+        System.out.println("\n\n~~~~~~~PASS 2~~~~~~~~\n\n");
         int i = 0;
         while (i < linesOfCode.size()) {
 
@@ -196,9 +198,10 @@ public class Assembler {
                     }
                 }
             }
+            
 
             String s = line.getObjectCode(symbolTable);
-            String ret = String.format("%3d   %6s   %s      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
+            String ret = String.format("%3d   %6s   %s\t      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
             System.out.println(ret);
             // String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
             //System.out.print(" operand "+s1);

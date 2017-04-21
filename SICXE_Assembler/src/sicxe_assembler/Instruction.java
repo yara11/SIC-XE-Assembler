@@ -103,6 +103,9 @@ public class Instruction {
                     objectCode += operand.getCode(symbolTable, this.format).substring(3);
 
                 }
+                while(objectCode.length() != 6){
+                    objectCode += "0";
+                }
                 break;
             case 4:
                 //Assembler.setB(false);
@@ -111,9 +114,11 @@ public class Instruction {
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 //objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
                 for (Operand operand : this.operands) {
-                    objectCode += "op";
                     objectCode += operand.getCode(symbolTable, 4).substring(1);
 
+                }
+                if(this.operands.size()==0){
+                    objectCode += "00000";
                 }
                 break;
             default:

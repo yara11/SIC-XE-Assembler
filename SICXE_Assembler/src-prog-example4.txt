@@ -4,47 +4,40 @@
   4   000006            +JSUB   RDREC
   5   00000A            +JSUB   WRREC
   6   00000E            COMPR    A,S
-         ***Error: Invalid syntax
-  7   00000E            CLEAR    S
-         ***Error: Invalid syntax
-  8   00000E   LENGTH   RESW    1
-  9   000011   .                                                                 
- 10   000011   . SUBROUTINE RDREC                                                
- 11   000011   .                                                                 
- 12   000011   RDREC    CLEAR   A  
-         ***Error: Invalid syntax
- 13   000011   RLOOP    TD      INPUT
- 14   000014            JEQ     RLOOP
- 15   000017            RD      INPUT
- 16   00001A            COMPR   A,T
-         ***Error: Invalid syntax
- 17   00001A            JLT     RLOOP
- 18   00001D            COMPR   A,S
-         ***Error: Invalid syntax
- 19   00001D            JGT     RLOOP
- 20   000020            STA     LENGTH
- 21   000023            RSUB
- 22   000026   INPUT    BYTE    X'F1'
- 23   000027   .                                                                 
- 24   000027   .SUBROUTINE WDREC                                                 
- 25   000027   .                                                                 
- 26   000027   WRREC    LDX     #0
- 27   00002A            LDS     #1
- 28   00002D            LDA     #0
- 29   000030            LDT     LENGTH
- 30   000033   WLOOP    TD      OUTPUT
- 31   000036            JEQ     WLOOP
- 32   000039            WD      OUTPUT
- 33   00003C            ADDR    S,A
-         ***Error: Invalid syntax
- 34   00003C            STA     VALUE1
- 35   00003F            STS     VALUE2
- 36   000042            LDA     VALUE2
- 37   000045            LDS     VALUE1
- 38   000048            TIXR    T 
-         ***Error: Invalid syntax
- 39   000048            JLT     WLOOP
- 40   00004B   OUTPUT   BYTE    X'05'
- 41   00004C   VALUE1   RESW    1
- 42   00004F   VALUE2   RESW    1
- 43   000052            END     FIRST
+  7   000010            CLEAR    S
+  8   000012   LENGTH   RESW    1
+  9   000015   .                                                                 
+ 10   000015   . SUBROUTINE RDREC                                                
+ 11   000015   .                                                                 
+ 12   000015   RDREC    CLEAR   A  
+ 13   000017   RLOOP    TD      INPUT
+ 14   00001A            JEQ     RLOOP
+ 15   00001D            RD      INPUT
+ 16   000020            COMPR   A,T
+ 17   000022            JLT     RLOOP
+ 18   000025            COMPR   A,S
+ 19   000027            JGT     RLOOP
+ 20   00002A            STA     LENGTH
+ 21   00002D            +RSUB
+ 22   000031   INPUT    BYTE    X'F1'
+ 23   000032   .                                                                 
+ 24   000032   .SUBROUTINE WDREC                                                 
+ 25   000032   .                                                                 
+ 26   000032   WRREC    LDX     #0
+ 27   000035            LDS     #1
+ 28   000038            LDA     #0
+ 29   00003B            LDT     LENGTH
+ 30   00003E   WLOOP    TD      OUTPUT
+ 31   000041            JEQ     WLOOP
+ 32   000044            WD      OUTPUT
+ 33   000047            ADDR    S,A
+ 34   000049            STA     VALUE1
+ 35   00004C            STS     VALUE2
+ 36   00004F            LDA     VALUE2
+ 37   000052            LDS     VALUE1
+ 38   000055            TIXR    T 
+ 39   000057            JLT     WLOOP
+ 40   00005A   OUTPUT   BYTE    X'05'
+ 41   00005B   VALUE1   RESW    1
+ 42   00005E   VALUE2   RESW    1
+ 43   000061            END     FIRST
