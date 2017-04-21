@@ -1,5 +1,4 @@
 // This class describes a line of assembly code
-
 //The source program to be assembled must be in fixed format as follows:
 //1. bytes 1–8 label
 //2. 9 blank
@@ -7,8 +6,8 @@
 //4. 16–17 blank
 //5. 18–35 operand
 //6. 36–66 comment
-
 package sicxe_assembler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,10 +16,7 @@ import java.util.Arrays;
 //dividing the list of operands
 //first checking for directives if not validating instruction
 //validating label and operands
-
 public class Line {
-
-    
 
     public Instruction getInstr() {
         return instr;
@@ -48,9 +44,6 @@ public class Line {
         return code_line;
     }
 
-    public void setCode_line(String code_line) {
-        this.code_line = code_line;
-    }
     private String address, label, comment;
 
     public String getAddress() {
@@ -62,127 +55,130 @@ public class Line {
     public Directive getDir() {
         return dir;
     }
-    
 
-    public void setDir(Directive dir) {
-        this.dir = dir;
-    }
     // Other stuff
     private int size = 0;
     private Boolean isComment = false, isError = false;
     private String error_message = null;
     // just keep it for printing
     private String code_line;
-    static Boolean isImm = false, isIndir = false;
-    
     // **** UNHANDELED: BASE, literals
     public Line(String code_line, LocationCounter LOCCTR, SymbolTable symbolTable, int last_line_no) {
         this.code_line = code_line;
         this.line_no = last_line_no + 1;
         this.address = Assembler.decToHex(LOCCTR.getLocation(), 6).toUpperCase();
-        if(code_line.charAt(0) == '.') {
+        if (code_line.charAt(0) == '.') {
             this.isComment = true;
             this.comment = code_line;
             this.size = 0;
-        }
-        else {
-            /***     Get label       ***/
+        } else {
+            /**
+             * * Get label       **
+             */
             this.label = hamada(code_line, 0, 7);
-            if(this.label.length() == 0) {
+            if (this.label.length() == 0) {
                 this.label = null;
             }
-            /***     Get instruction       ***/
+            /**
+             * * Get instruction       **
+             */
             // Things that may be given in an instruction
             String mnemonic = null;
-            ArrayList<String>operands = new ArrayList<>();
+            ArrayList<String> operands = new ArrayList<>();
             Boolean isFormat4 = false;
-            
-            
+            Boolean isImm = false, isIndir = false;
+
             // Get the mnemonic
             mnemonic = hamada(code_line, 9, 14);
             // check format 4
-            if(mnemonic.length() > 0 && mnemonic.charAt(0) == '+') {
+            if (mnemonic.length() > 0 && mnemonic.charAt(0) == '+') {
                 mnemonic = mnemonic.substring(1);
                 isFormat4 = true;
             }
-            
+
             // Get the operands list
             String operands_str = hamada(code_line, 17, 34);
-            if(operands_str.length() > 0) {
-                if(operands_str.charAt(0) == '#'){
+            if (operands_str.length() > 0) {
+                if (operands_str.charAt(0) == '#') {
                     Assembler.setB(false);
                     Assembler.setP(false);
                     isImm = true;
                     operands_str = operands_str.substring(1);
-                } else if(operands_str.charAt(0) == '@'){
+                } else if (operands_str.charAt(0) == '@') {
                     isIndir = true;
                     operands_str = operands_str.substring(1);
                 }
             }
-            if(operands_str != null && operands_str.length() > 0) {
-                operands = new ArrayList(Arrays.asList(operands_str.split(",")));   
+            if (operands_str != null && operands_str.length() > 0) {
+                operands = new ArrayList(Arrays.asList(operands_str.split(",")));
             }
-            
-            /***     Get comment       ***/
+
+            /**
+             * * Get comment       **
+             */
             this.comment = hamada(code_line, 35, 65);
-            
+
             // System.out.println(label + " " + mnemonic + " " + operands + " " + comment);
-            
-            /***     Validate line       ***/
+            /**
+             * * Validate line       **
+             */
             // Validate label
-            if(!validateNewLabel(this.label, symbolTable)) {
+            if (!validateNewLabel(this.label, symbolTable)) {
                 this.isError = true;
                 this.error_message = String.format("***Error: Symbol %s is already defined.", this.label);
             }
-            
-            /***     Check for directive      ***/
-            if(Directive.isDirective(mnemonic, operands_str)) {
+
+            /**
+             * * Check for directive      **
+             */
+            if (Directive.isDirective(mnemonic, operands_str)) {
                 this.dir = new Directive(mnemonic, operands_str);
                 this.size = this.dir.getSize();
                 // System.out.println("ok");
                 return;
-            }
-            
-            // Validate mnemonic
-            else if(InstructionSet.getInstruction(mnemonic) == null) {
+            } // Validate mnemonic
+            else if (InstructionSet.getInstruction(mnemonic) == null) {
                 this.isError = true;
                 this.error_message = String.format("***Error: mnemonic %s is undefined", mnemonic);
-            }
-            // Validate syntax and label operands
-            else if(!validateInstruction(mnemonic, operands, isFormat4, isImm, isIndir, symbolTable)){
-                if(this.error_message == null)
+            } // Validate syntax and label operands
+            else if (!validateInstruction(mnemonic, operands, isFormat4, isImm, isIndir, symbolTable)) {
+                if (this.error_message == null) {
                     this.error_message = "***Error: Invalid syntax";
+                }
                 this.isError = true;
-            }
-            /***   Create instruction   ***/
+            } /**
+             * * Create instruction   **
+             */
             else {
                 int instrFormat = InstructionSet.getInstruction(mnemonic).getFormat();
-                if(instrFormat == 1)
+                if (instrFormat == 1) {
                     this.instr = new Instruction(mnemonic);
-                else if(instrFormat == 2)
+                } else if (instrFormat == 2) {
                     this.instr = new Instruction(mnemonic, operands, symbolTable);
-                else
+                } else {
                     this.instr = new Instruction(mnemonic, operands, isFormat4, isImm, isIndir, symbolTable);
+                }
                 this.size = this.instr.getFormat();
             }
         }
     }
-    
-    private Boolean validateInstruction(String mnemonic, ArrayList<String>operands, Boolean isFormat4, Boolean isImm, Boolean isIndir, SymbolTable symbolTable) {
+
+    private Boolean validateInstruction(String mnemonic, ArrayList<String> operands, Boolean isFormat4, Boolean isImm, Boolean isIndir, SymbolTable symbolTable) {
         InstrDetails instrDetails = InstructionSet.getInstruction(mnemonic);
-        if(instrDetails.getFormat() < 3 && (isFormat4 || isImm || isIndir)){
+        if (instrDetails.getFormat() < 3 && (isFormat4 || isImm || isIndir)) {
+            System.out.println("* " + mnemonic);
             return false;
         }
         this.size = instrDetails.getFormat();
         int rNum = 0, lNum = 0, vNum = 0;
-        for(int i = 0; i < operands.size(); i++) {
+        for (int i = 0; i < operands.size(); i++) {
             /*
             if(!Operand.isValid(operands.get(i), symbolTable)) {
                 this.error_message = String.format("***Error: Undefined operand %s", operands.get(i));
                 return false;
             } 
-            */
-            if(instrDetails.getFormat() != 2 && i == operands.size()-1 && operands.get(i).toUpperCase().equals("X")) {
+             */
+            if (instrDetails.getFormat() != 2 && i == operands.size() - 1 && operands.get(i).toUpperCase().equals("X")) {
                 continue;
             }
             char opType = (new Operand(operands.get(i), symbolTable)).getType();
@@ -198,97 +194,100 @@ public class Line {
                     break;
             }
         }
-        if(rNum != instrDetails.getRegOps() || vNum < instrDetails.getDirOps()) {
+        if (rNum != instrDetails.getRegOps() || vNum < instrDetails.getDirOps()) {
             return false;
         }
         int rem = lNum + vNum - instrDetails.getDirOps();
-        if(rem != instrDetails.getMemOps()) {
+        if (rem != instrDetails.getMemOps()) {
             return false;
         }
         return true;
     }
-    
+
     private Boolean validateNewLabel(String lbl, SymbolTable symbolTable) {
-        if(lbl == null)
+        if (lbl == null) {
             return true;
+        }
         return !(Character.isDigit(lbl.charAt(0)) || symbolTable.isLabel(lbl));
     }
-    
+
     public static String hamada(String str, int stt, int end) {
-        if(stt >= str.length()){
+        if (stt >= str.length()) {
             return "";
         }
         String ret = str.substring(stt, Math.min(end + 1, str.length()));
-        ret = ret.replaceAll("\\s",""); // remove all whitespaces
+        ret = ret.trim(); // remove all whitespaces
         return ret;
     }
-    
+
     public Boolean isValid() {
         return !this.isError;
     }
-    
+
     public String getLabel() {
         return this.label;
     }
-    
+
     public int getSize() {
         return this.size;
     }
-    
+
     public Boolean validateOperands(SymbolTable symbolTable) {
+        if(this.dir != null || this.isComment)
+            return true;
         ArrayList<Operand> operands = this.instr.getOperands();
-        for(int i = 0; i < operands.size(); i++) {
-            if(!Operand.isValid(operands.get(i).getName(), symbolTable)) {
+        for (int i = 0; i < operands.size(); i++) {
+            if (!Operand.isValid(operands.get(i).getName(), symbolTable)) {
                 this.isError = true;
-                this.error_message = String.format("***Error: Undefined operand %s", operands.get(i));
+                this.error_message = String.format("***Error: Undefined operand %s", operands.get(i).getName());
                 return false;
-            } 
+            }
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
-        if(isComment) {
+        if (isComment) {
             return String.format("%3d   %6s   %-66s", line_no, address, comment);
         }
         String ret = String.format("%3d   %6s   %s", line_no, address, code_line);
-        if(isError) {
+        if (isError) {
             ret += '\n' + String.format("%9s%s", "", error_message);
         }
         return ret;
     }
-    public String baseString(){
+
+    public String baseString() {
         String ret = String.format("%3d            %s", line_no, code_line);
         return ret;
     }
-    
+
     public void unError() {
         this.isError = false;
     }
-    
+
     public void setAddress(String addr) {
         this.address = addr.toUpperCase();
     }
-    
+
     public String getObjectCode(SymbolTable symbolTable) {
-        if(this.isError || this.isComment) {
+        if (this.isError || this.isComment) {
             return " ";
         }
-        if(isImm == true){
+        if (this.dir != null) {  // if isDirective()
+            // System.out.println("testline");
+            return dir.getObjectCode(symbolTable);
+        }
+        if (this.instr.getI() == true) {
             Assembler.setB(false);
             Assembler.setP(false);
-        }
-        if(this.dir != null) {  // if isDirective()
-           // System.out.println("testline");
-            return dir.getObjectCode(symbolTable);
         }
         //System.out.println("testline");
         String str = instr.getObjectCode(symbolTable);
         return str;
     }
 
-    
     public Boolean getIsComment() {
         return isComment;
     }
@@ -297,7 +296,8 @@ public class Line {
         return isError;
     }
 
-   
+    public Boolean getIsDirective() {
+        return this.dir != null;
+    }
 
-   
 }

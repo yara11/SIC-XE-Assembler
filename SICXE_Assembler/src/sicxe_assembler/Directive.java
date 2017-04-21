@@ -28,10 +28,10 @@ public class Directive {
                 this.size = 3;
                 break;
             case "RESB":
-                this.size = Integer.parseInt(operand.trim());
+                this.size = Integer.parseInt(operand);
                 break;
             case "RESW":
-                this.size = 3 * Integer.parseInt(operand.trim());
+                this.size = 3 * Integer.parseInt(operand);
                 break;
            
             default:
@@ -93,19 +93,23 @@ public class Directive {
 
         switch(name){
             case "START":
-                return "5357";
             case "END":
-                return "        ";
             case "RESW":
-                return " ";
             case "RESB":
-                return "        ";
+                return "";
             case "BYTE":
                 int n = this.operand.length();
                 if(operand.charAt(0) == 'X'){
                     return operand.substring(2, operand.length()-1);
                 }
-            //TODO: char
+                else {
+                    String ret = "";
+                    for(int i = 2; i < this.operand.length() - 1; i++) {
+                        int ascii = (int)this.operand.charAt(i);
+                        ret = ret + Assembler.decToHex(ascii, 2);
+                    }
+                    return ret;
+                }
             case "WORD":
                 return Assembler.decToHex(Integer.parseInt(operand), 6);
         }
