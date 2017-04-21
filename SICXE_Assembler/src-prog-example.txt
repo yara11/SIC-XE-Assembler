@@ -8,5 +8,5 @@
   8   0003AE   LBL4     RESW    1
   9   0003B1            CLEAR   S
  10   0003B3   TOP      LDA     LBL3
- 11   0003B6            LDX     #INDEX
+ 11   0003B6            LDX     #LBL4
  12   0003B9            END     TERMPROJ

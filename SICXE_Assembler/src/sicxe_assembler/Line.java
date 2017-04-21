@@ -23,7 +23,7 @@ public class Line {
     }
     // Line stuff
     private int line_no;
-
+    public String text;
     public int getLine_no() {
         return line_no;
     }

@@ -1,0 +1,53 @@
+  1   001000   COPY     START   1000
+  2   001000   FIRST    STL     RETADR
+  3   001003   CLOOP    JSUB    RDREC
+  4   001006            LDA     LENGTH
+  5   001009            COMP    ZERO
+  6   00100C            JEQ     ENDFIL
+  7   00100F            JSUB    WRREC
+  8   001012            J       CLOOP
+  9   001015   ENDFIL   LDA     EOF
+ 10   001018            STA     BUFFER
+ 11   00101B            LDA     THREE
+ 12   00101E            STA     LENGTH
+ 13   001021            JSUB    WRREC
+ 14   001024            LDL     RETADR
+ 15   001027            RSUB     
+ 16   00102A   EOF      BYTE    C�EOF�
+         ***Error: mnemonic BYTE is undefined
+ 17   00102A   THREE    WORD    3
+ 18   00102D   ZERO     WORD    0
+ 19   001030   RETADR   RESW    1
+ 20   001033   LENGTH   RESW    1
+ 21   001036   BUFFER   RESB    4096
+ 22   002036   . 	                                                               
+ 23   002036   .	SUBROUTINE TO READ RECORD INTO BUFFER                           
+ 24   002036   . 		                                                              
+ 25   002036   RDREC    LDX     ZERO
+ 26   002039            LDA     ZERO
+ 27   00203C   RLOOP    TD      INPUT
+ 28   00203F            JEQ     RLOOP
+ 29   002042            RD      INPUT 
+ 30   002045            COMP    ZERO
+ 31   002048            JEQ     EXIT
+ 32   00204B            STCH    BUFFER,X
+ 33   00204E            TIX     MAXLEN
+ 34   002051            JLT     RLOOP
+ 35   002054   EXIT     STX     LENGTH
+ 36   002057            RSUB	 
+ 37   00205A   INPUT    BYTE    X'F1'
+ 38   00205B   MAXLEN   WORD    4096
+ 39   00205E   .                                                                 
+ 40   00205E   .	SUBROUTINE TO WRITE RECORD FROM BUFFER                          
+ 41   00205E   .		                                                               
+ 42   00205E   WRREC    LDX     ZERO
+ 43   002061   WLOOP    TD      OUTPUT
+ 44   002064            JEQ     WLOOP
+ 45   002067            LDCH    BUFFER,X
+ 46   00206A            WD      OUTPUT
+ 47   00206D            TIX     LENGTH
+ 48   002070            JLT     WLOOP
+ 49   002073            RSUB	 
+ 50   002076   OUTPUT   BYTE    X'05'	
+ 51   002077   END      FIRST
+         ***Error: mnemonic FIRST is undefined

@@ -106,7 +106,7 @@ public class Assembler {
             symW.close();
         } catch (IOException e) {
         }
-        return genPass2;
+        return true;
     }
 
     public void validateLabelswKeda() {
@@ -196,11 +196,20 @@ public class Assembler {
                     } else if (b == true && p == false) {
                         target = TA - base;
                     }
+                    else if (b == false && p == true) {
+                        target = TA - current;
+                    }
+                    if(target < 0) {
+                        target = 2048-target;
+                    }
+                    //System.out.println("target " + target + "TA " + TA + "current " + current);
+
                 }
             }
             
 
             String s = line.getObjectCode(symbolTable);
+            line.text= s;
             String ret = String.format("%3d   %6s   %s\t      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
             System.out.println(ret);
             // String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
@@ -242,6 +251,91 @@ public class Assembler {
             p = false;
         }
     }
+    public  ArrayList<String> mod(){
+
+         int i = 0;
+         ArrayList<String> mods = new ArrayList<>();
+        while (i < linesOfCode.size()) {
+
+            Line line = linesOfCode.get(i);
+            if(line.getInstr()!= null && line.getInstr().getFormat() == 4 && line.getInstr().getMnemonic().charAt(0)!='#' && !"RSUB".equals(line.getInstr().getMnemonic())){
+                    
+                String r = "M";
+                                  
+                int loc = hex2dec(line.getAddress())+1;
+                String start = decToHex(loc, 6);
+                r += start;
+                r += "05";
+                mods.add(r);
+
+            }
+            i++;
+        
+        }
+        return mods;
+    }
+    public String newText(int i){
+        String r= "T";
+        while(i < linesOfCode.size()){
+                    //System.out.println("dsfs");
+            String t = "";
+            while(t.length() <= 60 ){
+                if(" ".equals(linesOfCode.get(i).getObjectCode(symbolTable))){
+                    break;
+                }
+                t += linesOfCode.get(i).getObjectCode(symbolTable);
+                        System.out.println(t);
+                        i++;
+                                    System.out.println(i);
+
+            }
+             r += t.length() + t;
+         }
+        return r;
+    }
+    public ArrayList<String> text(){
+        System.out.println("dsfs");
+        int i=0;
+        ArrayList<String> texts = new ArrayList<>();
+        while(i < linesOfCode.size()){
+                    //System.out.println("dsfs");
+            String t = "";
+            int st = i;
+            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) <= 60 &&!" ".equals(linesOfCode.get(i).text)){
+                
+                t += linesOfCode.get(i).text;
+                        
+                     i++;   
+            }
+            while(i < linesOfCode.size() && " ".equals(linesOfCode.get(i).text))
+                i++;
+           // i=linesOfCode.get(i).getLine_no();
+            String r = "T" + linesOfCode.get(st).getAddress().toUpperCase()+ (t.length()) + t.toUpperCase();
+            //System.out.println(r);
+            texts.add(r);
+           // i++;
+           
+        
+        }
+        
+        
+        return texts;
+    }
+    public String head(){
+            int end = hex2dec(linesOfCode.get(linesOfCode.size()-1).getAddress());
+            int start = hex2dec(linesOfCode.get(0).getAddress());
+            int length = end - start;
+            String h = "H";
+            h += linesOfCode.get(0).getLabel() + linesOfCode.get(0).getAddress() + decToHex(length,6);
+    
+        return h;
+    }
+    public String end(){
+        String e = "E";
+        e += linesOfCode.get(0).getAddress();
+        
+    return e;
+    }
 
     public static void main(String[] args) {
         String asmFileName = "example4.txt";
@@ -255,6 +349,27 @@ public class Assembler {
         //System.out.print(base);
         if(pass1result)
             assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
+        ArrayList<String> modRecords;
+               
+        modRecords = assembler.mod();
+        int i =0;
+        while(i < modRecords.size()){
+                System.out.println(modRecords.get(i));
+                i++;
+        }
+        String head = assembler.head();
+        System.out.println(head);
+        String end = assembler.end();
+        System.out.println(end);
+        
+         ArrayList<String> textRecords;
+               
+        textRecords = assembler.text();
+        i =0;
+        while(i < textRecords.size()){
+                System.out.println(textRecords.get(i));
+                i++;
+        }
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }

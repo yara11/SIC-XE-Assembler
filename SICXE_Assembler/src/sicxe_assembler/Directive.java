@@ -46,7 +46,7 @@ public class Directive {
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equals("END")){
+        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end")){
             return true;
         }
         else if(name.equals("BYTE")) {

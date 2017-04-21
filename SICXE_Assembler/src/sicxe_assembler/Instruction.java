@@ -10,7 +10,7 @@ public class Instruction {
     // Missing: How to set b & p
     private int format;
     private String mnemonic;
-    private Boolean n = false, i = false, b = false, p = false;
+    private Boolean n = false, i = false, b = false, p = true;
     private Boolean x = false;
     private Boolean e = false;
 
@@ -99,10 +99,11 @@ public class Instruction {
                 //objectCode += this.toint(a);
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 // System.out.println("test1");
-                for (Operand operand : this.operands) {
+                objectCode += Assembler.decToHex(Assembler.target, 6).substring(3);
+                /*for (Operand operand : this.operands) {
                     objectCode += operand.getCode(symbolTable, this.format).substring(3);
 
-                }
+                }*/
                 while(objectCode.length() != 6){
                     objectCode += "0";
                 }
