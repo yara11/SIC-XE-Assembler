@@ -55,7 +55,7 @@ public class Operand {
             case 'r':
                 return RegisterSet.getRegCode(this.name);
             case ' ':
-                return "  ";
+                return "0000";
             case 'v':
                 return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
             default:

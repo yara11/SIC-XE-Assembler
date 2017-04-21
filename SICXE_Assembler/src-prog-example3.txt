@@ -1,54 +1,50 @@
   1   000000   PALIND   START   0
-  2                     Base    LENGTH
-  3   000000   .ERROR    RSUB                                                    
-  4   000000   RESULT   RESW    1
-  5   000003   .         CLEAR   A                                               
-  6   000003   .         CLEAR   S                                               
-  7                     Base    RLOOP
-  8   000003   LENGTH   RESW    1
-  9   000006   FIRST    LDB     #1
- 10   000009   CLOOP    +JSUB   RDREC
- 11   00000D            LDA     LENGTH
- 12   000010            COMP    #0
- 13   000013            JEQ     CLOOP
- 14   000016            LDT     #LENGTH
- 15   000019            SUBR    B,T
- 16   00001B            +JSUB   CMPREC
- 17   00001F   .                                                                 
- 18   00001F   . SUBROUTINE READ RECORD                                          
- 19   00001F   .                                                                 
- 20   00001F   RDREC    CLEAR   X
- 21   000021            CLEAR   A
- 22   000023            CLEAR   S
- 23   000025            +LDT    #4096
- 24   000029   RLOOP    TD      INPUT
- 25   00002C            JEQ     RLOOP
- 26   00002F            RD      INPUT
- 27   000032            COMPR   A,S
- 28   000034            JEQ     EXIT1
- 29   000037            STCH    BUFFER,X
- 30   00003A            TIXR    T
- 31   00003C            JLT     RLOOP
- 32   00003F   EXIT1    STX     LENGTH
- 33   000042            RSUB
- 34   000045   INPUT    BYTE    X'F1'
- 35   000046   .                                                                 
- 36   000046   . SUBROUTINE COMPARE RECORD                                       
- 37   000046   .                                                                 
- 38   000046   CMPREC   CLEAR   A
- 39   000048            COMPR   X,T
- 40   00004A            JEQ     EXIT2
- 41   00004D            JGT     EXIT2
- 42   000050            LDA     BUFFER,X
- 43   000053            LDS     BUFFER,T
+  2   000000   FIRST    LDB     #1
+  3   000003   CLOOP    +JSUB   RDREC
+  4   000007            LDA     LENGTH
+  5   00000A            COMP    #0
+  6   00000D            JEQ     CLOOP
+  7   000010            LDT     #LENGTH
+  8   000013            SUBR    B,T
+  9   000015            +JSUB   CMPREC
+ 10   000019   LENGTH   RESW    1
+ 11   00001C   .                                                                 
+ 12   00001C   . SUBROUTINE READ RECORD                                          
+ 13   00001C   .                                                                 
+ 14   00001C   RDREC    CLEAR   X
+ 15   00001E            CLEAR   A
+ 16   000020            CLEAR   S
+ 17   000022            +LDT    #4096
+ 18   000026   RLOOP    TD      INPUT
+ 19   000029            JEQ     RLOOP
+ 20   00002C            RD      INPUT
+ 21   00002F            COMPR   A,S
+ 22   000031            JEQ     EXIT1
+ 23   000034            STCH    BUFFER,X
+ 24   000037            TIXR    T
+ 25   000039            JLT     RLOOP
+ 26   00003C   EXIT1    STX     LENGTH
+ 27   00003F            RSUB
+ 28   000042   INPUT    BYTE    X'F1'
+ 29   000043   .                                                                 
+ 30   000043   . SUBROUTINE COMPARE RECORD                                       
+ 31   000043   .                                                                 
+ 32   000043   CMPREC   CLEAR   A
+ 33   000045            COMPR   X,T
+ 34   000047            JEQ     EXIT2
+ 35   00004A            JGT     EXIT2
+ 36   00004D            LDA     BUFFER,X
+ 37   000050            LDS     BUFFER,T
          ***Error: Invalid syntax
- 44   000056            SUBR    B,T
- 45   000058            ADDR    B,X
- 46   00005A            COMPR   A,S
- 47   00005C            JEQ     CMPREC
- 48   00005F            JLT     ERROR
- 49   000062            JGT     ERROR
- 50   000065   EXIT2    LDA     #1
- 51   000068            STA     RESULT
- 52   00006B   BUFFER   RESB    4096
- 53   00106B            END     FIRST
+ 38   000053            SUBR    B,T
+ 39   000055            ADDR    B,X
+ 40   000057            COMPR   A,S
+ 41   000059            JEQ     CMPREC
+ 42   00005C            JLT     ERROR
+ 43   00005F            JGT     ERROR
+ 44   000062   EXIT2    LDA     #1
+ 45   000065            STA     RESULT
+ 46   000068   ERROR    RSUB
+ 47   00006B   RESULT   RESW    1
+ 48   00006E   BUFFER   RESB    4096
+ 49   00106E            END     FIRST

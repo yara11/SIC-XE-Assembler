@@ -4,8 +4,9 @@ LENGTH                 000012
 RDREC                  000015
 RLOOP                  000017
 INPUT                  000031
-WRREC                  000032
-WLOOP                  00003e
-OUTPUT                 00005a
-VALUE1                 00005b
-VALUE2                 00005e
+WRREC                  00003c
+WLOOP                  000048
+BUFFER                 000064
+OUTPUT                 000a28
+VALUE1                 000a29
+VALUE2                 000a2c

@@ -7,6 +7,10 @@ import java.util.ArrayList;
 
 public class Instruction {
 
+    public Boolean getN() {
+        return n;
+    }
+
     // Missing: How to set b & p
     private int format;
     private String mnemonic;
@@ -99,18 +103,16 @@ public class Instruction {
                 //objectCode += this.toint(a);
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 // System.out.println("test1");
-                objectCode += Assembler.decToHex(Assembler.target, 6).substring(3);
-                /*for (Operand operand : this.operands) {
-                    objectCode += operand.getCode(symbolTable, this.format).substring(3);
-
-                }*/
+                
+                objectCode += Assembler.decToHex(Assembler.target,3);
+                
                 while(objectCode.length() != 6){
                     objectCode += "0";
                 }
                 break;
             case 4:
-                //Assembler.setB(false);
-                //Assembler.setP(false);
+                Assembler.setB(false);
+                Assembler.setP(false);
                 objectCode = hexPlusDec(opcode, toInt(n) * 2 + toInt(i));
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 //objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);

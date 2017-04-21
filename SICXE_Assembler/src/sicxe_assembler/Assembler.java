@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import static java.lang.Math.*;
 import java.util.ArrayList;
-
+import java.math.*;
 public class Assembler {
 
     private final String regFileName = "register_set.txt";
@@ -172,13 +173,13 @@ public class Assembler {
                 //System.out.println("test");
                 enableBase = true;
                 base = getBaseValue(baseCounter);
-                //System.out.println(base);
+                System.out.println("base is "+base);
                 baseCounter++;
             }
             ArrayList<Operand> op = new ArrayList<>();
             if (line.getIsError() == false && line.getIsComment() == false && line.getInstr() != null && line.getIsDirective() == false && line.getInstr().getOperands().size() > 0) {
                 op = line.getInstr().getOperands();
-                if (op.get(0).getType() == 'l') {
+                if (op.get(0).getType() == 'l' || op.get(0).getType() =='v' ) {
                     //String l = op.get(0).getName();
                     // System.out.print(" operand "+l);
                     String n = op.get(0).getCode(symbolTable, line.getInstr().getFormat());
@@ -190,8 +191,13 @@ public class Assembler {
                     int current = hex2dec(linesOfCode.get(i + 1).getAddress());
                     // System.out.print("current " + current);
                     target = TA - current;
-                    setBP(target);
-                    if (b == false && p == false) {
+                    //System.out.print("test target" +target);
+                    setBP(Math.abs(target));
+                    //System.out.print("test");
+                    
+                    if(line.getInstr().getI() == true && line.getInstr().getN() == false)
+                        target = TA;
+                    else if (b == false && p == false) {
                         target = TA;
                     } else if (b == true && p == false) {
                         target = TA - base;
@@ -200,15 +206,16 @@ public class Assembler {
                         target = TA - current;
                     }
                     if(target < 0) {
-                        target = 2048-target;
+                        target = 4096+target;
                     }
-                    //System.out.println("target " + target + "TA " + TA + "current " + current);
+                    String t = Integer.toBinaryString(target);
+                   // System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
 
                 }
             }
             
 
-            String s = line.getObjectCode(symbolTable);
+            String s = line.getObjectCode(symbolTable).toUpperCase();
             line.text= s;
             String ret = String.format("%3d   %6s   %s\t      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
             System.out.println(ret);
@@ -240,13 +247,17 @@ public class Assembler {
 
     public static void setBP(int target) {
         if (enableBase == false) {
+           // System.out.println("pcrelatve1");
+
             b = false;
             p = true;
             //continue;
-        } else if ((target) <= 2047 && (target) >= -2048) {
+        } else if (target < 2048) {
+          //  System.out.println("pcrelatve2");
             b = false;
             p = true;
-        } else if ((target) <= 4096 && (target) >= 0) {
+        } else if (target <=4096) {
+         //   System.out.println("baserelative");
             b = true;
             p = false;
         }
@@ -260,12 +271,12 @@ public class Assembler {
             Line line = linesOfCode.get(i);
             if(line.getInstr()!= null && line.getInstr().getFormat() == 4 && line.getInstr().getMnemonic().charAt(0)!='#' && !"RSUB".equals(line.getInstr().getMnemonic())){
                     
-                String r = "M";
+                String r = "M^";
                                   
                 int loc = hex2dec(line.getAddress())+1;
                 String start = decToHex(loc, 6);
                 r += start;
-                r += "05";
+                r += "^05";
                 mods.add(r);
 
             }
@@ -294,24 +305,28 @@ public class Assembler {
         return r;
     }
     public ArrayList<String> text(){
-        System.out.println("dsfs");
+      //  System.out.println("dsfs");
         int i=0;
         ArrayList<String> texts = new ArrayList<>();
         while(i < linesOfCode.size()){
                     //System.out.println("dsfs");
             String t = "";
             int st = i;
-            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) <= 60 &&!" ".equals(linesOfCode.get(i).text)){
+            int n=0;
+            int length;
+            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) < 60+n &&!" ".equals(linesOfCode.get(i).text)){
                 
-                t += linesOfCode.get(i).text;
-                        
+                t += linesOfCode.get(i).text +"^";
+                      n++;  
                      i++;   
             }
+            length = t.length()-n;
             while(i < linesOfCode.size() && " ".equals(linesOfCode.get(i).text))
                 i++;
            // i=linesOfCode.get(i).getLine_no();
-            String r = "T" + linesOfCode.get(st).getAddress().toUpperCase()+ (t.length()) + t.toUpperCase();
+            String r = "T^" + linesOfCode.get(st).getAddress().toUpperCase()+"^"+ decToHex(length/2,2)+"^" + t.toUpperCase();
             //System.out.println(r);
+            r=r.substring(0, r.length()-1);
             texts.add(r);
            // i++;
            
@@ -325,13 +340,13 @@ public class Assembler {
             int end = hex2dec(linesOfCode.get(linesOfCode.size()-1).getAddress());
             int start = hex2dec(linesOfCode.get(0).getAddress());
             int length = end - start;
-            String h = "H";
-            h += linesOfCode.get(0).getLabel() + linesOfCode.get(0).getAddress() + decToHex(length,6);
+            String h = "H^";
+            h += linesOfCode.get(0).getLabel()+"^" + linesOfCode.get(0).getAddress()+"^" + decToHex(length,6);
     
         return h;
     }
     public String end(){
-        String e = "E";
+        String e = "E^";
         e += linesOfCode.get(0).getAddress();
         
     return e;

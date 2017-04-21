@@ -280,8 +280,8 @@ public class Line {
             return dir.getObjectCode(symbolTable);
         }
         if (this.instr.getI() == true) {
-            Assembler.setB(false);
-            Assembler.setP(false);
+            //Assembler.setB(false);
+            //Assembler.setP(false);
         }
         //System.out.println("testline");
         String str = instr.getObjectCode(symbolTable);

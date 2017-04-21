@@ -1,6 +1,7 @@
 FIBO     START   0
 FIRST    LDT     #1
          LDS     #10
+         BASE    LENGTH
          +JSUB   RDREC
          +JSUB   WRREC
          COMPR    A,S
@@ -19,7 +20,7 @@ RLOOP    TD      INPUT
          JGT     RLOOP
          STA     LENGTH
          +RSUB
-INPUT    BYTE    X'F1'
+INPUT    BYTE    C'TEST STRING'
 .
 .SUBROUTINE WDREC
 .
@@ -32,11 +33,12 @@ WLOOP    TD      OUTPUT
          WD      OUTPUT
          ADDR    S,A
          STA     VALUE1
-         STS     VALUE2
-         LDA     VALUE2
+         STS     VALUE2,X
+         LDA     #VALUE2
          LDS     VALUE1
          TIXR    T 
          JLT     WLOOP
+BUFFER   RESB    2500
 OUTPUT   BYTE    X'05'
 VALUE1   RESW    1
 VALUE2   RESW    1
