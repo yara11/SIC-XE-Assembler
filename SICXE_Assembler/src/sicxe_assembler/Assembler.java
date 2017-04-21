@@ -107,7 +107,7 @@ public class Assembler {
             symW.close();
         } catch (IOException e) {
         }
-        return true;
+        return genPass2;
     }
 
     public void validateLabelswKeda() {
@@ -277,7 +277,7 @@ public class Assembler {
                 String start = decToHex(loc, 6);
                 r += start;
                 r += "^05";
-                mods.add(r);
+                mods.add(r.toUpperCase());
 
             }
             i++;
@@ -326,7 +326,7 @@ public class Assembler {
            // i=linesOfCode.get(i).getLine_no();
             String r = "T^" + linesOfCode.get(st).getAddress().toUpperCase()+"^"+ decToHex(length/2,2)+"^" + t.toUpperCase();
             //System.out.println(r);
-            r=r.substring(0, r.length()-1);
+            r=r.substring(0, r.length()-1).toUpperCase();
             texts.add(r);
            // i++;
            
@@ -343,16 +343,16 @@ public class Assembler {
             String h = "H^";
             h += linesOfCode.get(0).getLabel()+"^" + linesOfCode.get(0).getAddress()+"^" + decToHex(length,6);
     
-        return h;
+        return h.toUpperCase();
     }
     public String end(){
         String e = "E^";
-        e += linesOfCode.get(0).getAddress();
+        e += linesOfCode.get(0).getAddress().toUpperCase();
         
     return e;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String asmFileName = "example4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
@@ -385,6 +385,21 @@ public class Assembler {
                 System.out.println(textRecords.get(i));
                 i++;
         }
+        FileWriter htme = new FileWriter("HTME.txt");
+        htme.write(head + "\n");
+        i =0;
+        while(i < textRecords.size()){          
+                htme.write(textRecords.get(i) + '\n');
+                i++;
+        }
+        i =0;
+        while(i < modRecords.size()){
+                htme.write(modRecords.get(i) + '\n');
+                i++;
+        }
+        htme.write(end + '\n');
+        
+        htme.close();
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }
