@@ -69,7 +69,7 @@ public class Instruction {
     // Fills operands list and sets x flag if applicable
     private void getOperands(ArrayList<String> operandNames, SymbolTable symTable) {
         for (int i = 0; i < operandNames.size(); i++) {
-            if (i == operandNames.size() - 1 && operandNames.get(i).toUpperCase().equals("X")) {
+            if (i == operandNames.size() - 1 && operandNames.get(i).toUpperCase().equals("X") && operandNames.size() == 2 && this.format != 2) {
                 this.x = true;
                 continue;
             }
@@ -100,12 +100,27 @@ public class Instruction {
                 objectCode = hexPlusDec(opcode, toInt(n) * 2 + toInt(i));
                 //System.out.println("test1");
                 Boolean a = true;
+                if(operands.size() != 0 && this.operands.get(0).getType() == 'v'){
+                     Assembler.setB(false);
+                     Assembler.setP(false);
+                 }
                 //objectCode += this.toint(a);
+                if(this.operands.size() == 0)
+                    objectCode += "000";
+                else{
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 // System.out.println("test1");
                 
-                objectCode += Assembler.decToHex(Assembler.target,3);
+                  if(this.operands.get(0).getType() == 'v'){
+                    String str = this.operands.get(0).getName();
+                    while(str.length() < 3)
+                        str = "0" + str;
+                    objectCode += str;
+                }
+                else
+                    objectCode += Assembler.decToHex(Assembler.target,3);
                 
+                }
                 while(objectCode.length() != 6){
                     objectCode += "0";
                 }
@@ -117,8 +132,11 @@ public class Instruction {
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
                 //objectCode += Assembler.decToHex(toInt(x)*8 + toInt(b)*4 + toInt(p)*2 +toInt(e), 1);
                 for (Operand operand : this.operands) {
-                    objectCode += operand.getCode(symbolTable, 4).substring(1);
-
+                  //  objectCode += operand.getCode(symbolTable, 4).substring(1);
+                  String str= operand.getCode(symbolTable, 4);
+                    while(str.length() < 5)
+                        str = "0" + str;
+                    objectCode += str;
                 }
                 if(this.operands.size()==0){
                     objectCode += "00000";

@@ -97,6 +97,7 @@ public class Directive {
             case "RESW":
             case "RESB":
             case "BASE":
+            case "NOBASE":
                 return " ";
             case "BYTE":
                 int n = this.operand.length();

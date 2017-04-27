@@ -152,7 +152,7 @@ public class Assembler {
         if (symbolTable.isLabel(str) == null) {
             baseError = true;
         } else {
-            return Integer.parseInt(symbolTable.getLocation(str));
+            return hex2dec(symbolTable.getLocation(str));
         }
 
         return 0;
@@ -176,6 +176,7 @@ public class Assembler {
                 System.out.println("base is "+base);
                 baseCounter++;
             }
+            
             ArrayList<Operand> op = new ArrayList<>();
             if (line.getIsError() == false && line.getIsComment() == false && line.getInstr() != null && line.getIsDirective() == false && line.getInstr().getOperands().size() > 0) {
                 op = line.getInstr().getOperands();
@@ -192,15 +193,18 @@ public class Assembler {
                     // System.out.print("current " + current);
                     target = TA - current;
                     //System.out.print("test target" +target);
-                    setBP(Math.abs(target));
+                    setBP(target);
                     //System.out.print("test");
                     
-                    if(line.getInstr().getI() == true && line.getInstr().getN() == false)
-                        target = TA;
-                    else if (b == false && p == false) {
+                    //if(line.getInstr().getI() == true && line.getInstr().getN() == false)
+                      //  target = TA;
+                     if (b == false && p == false) {
                         target = TA;
                     } else if (b == true && p == false) {
                         target = TA - base;
+                        String x = Integer.toBinaryString(target);
+                    System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
+
                     }
                     else if (b == false && p == true) {
                         target = TA - current;
@@ -208,8 +212,13 @@ public class Assembler {
                     if(target < 0) {
                         target = 4096+target;
                     }
+                    if(line.getInstr().getFormat()!=4 && target > 4095 && (target < 0 && b == true))
+                    {
+                        System.out.println("error target base out of bounds");
+                        System.exit(0);
+                    }
                     String t = Integer.toBinaryString(target);
-                   // System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
+                   //System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
 
                 }
             }
@@ -252,11 +261,11 @@ public class Assembler {
             b = false;
             p = true;
             //continue;
-        } else if (target < 2048) {
+        } else if (target < 2048 && target > -2048) {
           //  System.out.println("pcrelatve2");
             b = false;
             p = true;
-        } else if (target <=4096) {
+        } else if (target < 4096) {
          //   System.out.println("baserelative");
             b = true;
             p = false;
@@ -353,7 +362,7 @@ public class Assembler {
     }
 
     public static void main(String[] args) throws IOException {
-        String asmFileName = "example4.txt";
+        String asmFileName = "example5.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);
@@ -363,6 +372,7 @@ public class Assembler {
         }
         //System.out.print(base);
         if(pass1result)
+        {
             assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
         ArrayList<String> modRecords;
                
@@ -386,22 +396,23 @@ public class Assembler {
                 i++;
         }
         FileWriter htme = new FileWriter("HTME.txt");
-        htme.write(head + "\n");
+        htme.write(head + "\r\n");
         i =0;
         while(i < textRecords.size()){          
-                htme.write(textRecords.get(i) + '\n');
+                htme.write(textRecords.get(i) + "\r\n");
                 i++;
         }
         i =0;
         while(i < modRecords.size()){
-                htme.write(modRecords.get(i) + '\n');
+                htme.write(modRecords.get(i) + "\r\n");
                 i++;
         }
-        htme.write(end + '\n');
+        htme.write(end + "\r\n");
         
         htme.close();
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
+    }
     }
 
 }
