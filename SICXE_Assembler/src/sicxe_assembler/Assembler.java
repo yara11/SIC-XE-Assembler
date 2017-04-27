@@ -203,7 +203,7 @@ public class Assembler {
                     } else if (b == true && p == false) {
                         target = TA - base;
                         String x = Integer.toBinaryString(target);
-                    System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
+                   // System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
 
                     }
                     else if (b == false && p == true) {
@@ -323,7 +323,7 @@ public class Assembler {
             int st = i;
             int n=0;
             int length;
-            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) < 60+n &&!" ".equals(linesOfCode.get(i).text)){
+            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) < 60+n &&!" ".equals(linesOfCode.get(i).text)/* && !(linesOfCode.get(i).getIsDirective() == true && (!linesOfCode.get(i).getDir().getName().equalsIgnoreCase("BASE") || !linesOfCode.get(i).getDir().getName().equalsIgnoreCase("NOBASE")))*/){
                 
                 t += linesOfCode.get(i).text +"^";
                       n++;  
@@ -362,7 +362,7 @@ public class Assembler {
     }
 
     public static void main(String[] args) throws IOException {
-        String asmFileName = "example5.txt";
+        String asmFileName = "PROG_FORMAT4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);

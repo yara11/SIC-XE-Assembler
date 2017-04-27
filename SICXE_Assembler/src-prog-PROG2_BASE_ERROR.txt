@@ -1,0 +1,43 @@
+  1   001000   MAIN     START   1000         
+  2   001000            CLEAR   X
+  3   001002            JSUB    GETPAIR
+  4   001005            STCH    ADDR2
+  5   001008            JSUB    GETPAIR
+  6   00100B            STCH    ADDR3
+  7   00100E            LDB     ADDR
+  8   001011            JSUB    GETPAIR
+  9   001014            STCH    ADDR 
+ 10   001017            JSUB    GETPAIR
+ 11   00101A            STCH    ADDR2
+ 12   00101D   LOOP     JSUB    GETPAIR
+ 13                     BASE    ADDR
+ 14   001020            STCH    ADDR,X
+ 15   001023            NOBASE
+ 16   001023            TIXR    X
+ 17   001025            J       LOOP
+ 18   001028   GETPAIR  STL     RTADDR
+ 19   00102B            JSUB    READ
+ 20   00102E            SHIFTL  A,4
+ 21   001030            STCH    HEX
+ 22   001033            OR      ORADDR
+ 23   001036            J       @RTADDR
+ 24   001039   READ	 TD      #X'F1'
+         ***Error: mnemonic # is undefined
+ 25   001039            JEQ     READ 
+ 26   00103C            CLEAR   A
+ 27   00103E            RD      #X'F1'
+ 28   001041            COMP    #48
+ 29   001044            JLT     EOFCK
+ 30   001047            SUB     #48
+ 31   00104A            COMP    #10
+ 32   00104D            JLT     GOBACK
+ 33   001050            SUB     #7
+ 34   001053   GOBACK   RSUB    
+ 35   001056   EOFCK    COMP 
+         ***Error: Invalid syntax
+ 36   001059            JEQ     EXIT
+ 37   00105C            COMP    #4
+ 38   00105F            JGT     READ
+ 39   001062   EXIT     CLEAR   L 
+ 40   001064            J       @ADDR 
+ 41   001067            END     MAIN

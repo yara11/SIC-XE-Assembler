@@ -2,6 +2,10 @@ package sicxe_assembler;
 
 public class Directive {
     private String name;
+
+    public String getName() {
+        return name;
+    }
     private String operand;
 
     public String getOperand() {
