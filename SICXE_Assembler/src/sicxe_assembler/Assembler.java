@@ -362,7 +362,7 @@ public class Assembler {
     }
 
     public static void main(String[] args) throws IOException {
-        String asmFileName = "PROG_FORMAT4.txt";
+        String asmFileName = "example5.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);

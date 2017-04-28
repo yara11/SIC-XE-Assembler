@@ -98,10 +98,12 @@ public class Directive {
         switch(name){
             case "START":
             case "END":
-            case "RESW":
-            case "RESB":
             case "BASE":
             case "NOBASE":
+                return "";
+            case "RESW":
+            case "RESB":
+            
                 return " ";
             case "BYTE":
                 int n = this.operand.length();
