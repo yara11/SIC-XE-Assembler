@@ -50,7 +50,7 @@ public class Directive {
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end")){
+        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end") || name.equalsIgnoreCase("ltorg")){
             return true;
         }
         else if(name.equals("BYTE")) {
@@ -100,6 +100,7 @@ public class Directive {
             case "END":
             case "BASE":
             case "NOBASE":
+            case "LTORG":
                 return "";
             case "RESW":
             case "RESB":
@@ -120,6 +121,7 @@ public class Directive {
                 }
             case "WORD":
                 return Assembler.decToHex(Integer.parseInt(operand), 6);
+            
         }
     
     

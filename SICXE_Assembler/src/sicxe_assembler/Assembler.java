@@ -13,6 +13,7 @@ public class Assembler {
     private final String instrSetFileName = "instruction_set.txt";
     private static Boolean b, p;
     public static int target;
+    public static ArrayList<Lit> literals = new ArrayList<>();
 
     public static Boolean getB() {
         //System.out.print("oide");
@@ -71,6 +72,14 @@ public class Assembler {
                     cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
                     //System.out.print(cur_line.getObjectCode(symbolTable));
                 }
+                if(Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")){
+                    
+                addLit();
+                                   
+                    
+                    
+                
+                }
                 // TODO: VALIDATE "END OPERAND" OR "LABEL"
                 if (Line.hamada(line, 9, 14).toUpperCase().equals("END")) {
                     cur_line.unError();
@@ -120,6 +129,22 @@ public class Assembler {
         }
     }
 
+    public void addLit(){
+        
+        int i;
+        for(i=0; i<literals.size(); i++)
+        {
+            if(literals.get(i).isMark() == false)
+            {
+                Lit l = literals.get(i);
+                String s = l.getValue();
+                Line line = new Line(s, LOCCTR,this.symbolTable, 0);
+                
+            }
+        }
+        
+    
+    }
     // Because labels may be declared after they are used,
     // we need a way to save them before sgkzdjngldsin
     /*private void collectLabels(String asmFileName) {
@@ -362,6 +387,7 @@ public class Assembler {
     }
 
     public static void main(String[] args) throws IOException {
+        
         String asmFileName = "example5.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
@@ -370,6 +396,12 @@ public class Assembler {
         if (enableBase == true) {
             base = getBaseValue(baseCounter);
         }
+        int i =0;
+        for(i=0; i<literals.size(); i++){
+            System.out.println(literals.get(i).toString());
+            
+            
+        }
         //System.out.print(base);
         if(pass1result)
         {
@@ -377,7 +409,7 @@ public class Assembler {
         ArrayList<String> modRecords;
                
         modRecords = assembler.mod();
-        int i =0;
+        
         while(i < modRecords.size()){
                 System.out.println(modRecords.get(i));
                 i++;

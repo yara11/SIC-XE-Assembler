@@ -17,7 +17,8 @@ import java.util.Arrays;
 //first checking for directives if not validating instruction
 //validating label and operands
 public class Line {
-
+    boolean isLit = false;
+    public boolean literalError = false;
     public Instruction getInstr() {
         return instr;
     }
@@ -107,7 +108,35 @@ public class Line {
                 } else if (operands_str.charAt(0) == '@') {
                     isIndir = true;
                     operands_str = operands_str.substring(1);
+                } else if(operands_str.charAt(0) == '='){
+                    if((operands_str.charAt(1) == 'X' || operands_str.charAt(1) == 'C') && operands_str.charAt(2) =='\'' && operands_str.charAt(operands_str.length()-1) == '\'')
+                    {
+                        Lit l = new Lit();
+                        isLit = true;
+                        int length = operands_str.length()-4;
+                        String value = operands_str.substring(3, operands_str.length()-1);
+                        if(operands_str.charAt(1) == 'X'){
+                            l.setIsHex(true);
+                            l.setLength(length/2);
+                            l.setValue(value);
+                        }
+                        if(operands_str.charAt(1) == 'C'){
+                            l.setIsHex(false);
+                            l.setLength(length);
+                            l.setValue(value);
+                        }
+                        operands_str = operands_str.substring(3, operands_str.length()-1);
+                        
+                        Assembler.literals.add(l);
+                       
+                    }
+                    else
+                    {
+                        System.out.println("literal format error");
+                        literalError = true;
+                    }
                 }
+                
             }
             if (operands_str != null && operands_str.length() > 0) {
                 operands = new ArrayList(Arrays.asList(operands_str.split(",")));
@@ -237,7 +266,8 @@ public class Line {
             return true;
         ArrayList<Operand> operands = this.instr.getOperands();
         for (int i = 0; i < operands.size(); i++) {
-            if (!Operand.isValid(operands.get(i).getName(), symbolTable)) {
+            if (!Operand.isValid(operands.get(i).getName(), symbolTable) && isLit == false) {
+                
                 this.isError = true;
                 this.error_message = String.format("***Error: Undefined operand %s", operands.get(i).getName());
                 return false;

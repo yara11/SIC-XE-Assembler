@@ -6,10 +6,12 @@ CLOOP    +JSUB   RDREC             4B101036
          LDA     LENGTH            032026
          COMP    #0                290000
          JEQ     ENDFIL            332007
+         LDA     =X'12'
          +JSUB   WRREC             4B10105D
          J       CLOOP             3F2FEC
 ENDFIL   LDA     EOF               032010
          STA     BUFFER            0F2016
+         LTORG
          LDA     #3                010003
          STA     LENGTH            0F200D
          +JSUB   WRREC             4B10105D
