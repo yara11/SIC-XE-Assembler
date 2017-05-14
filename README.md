@@ -34,6 +34,8 @@ PART 2:
 - [ ] Handle EQU and ORG directives
 - [ ] Handle using CSECT directive
 - [ ] Handle ' * ' (BONUS)
+
+
 Handle errors:
 - [ ] Forward references are not allowed in symbols
 - [ ] Format 4 should be used when the operand is an external symbol in another control section
