@@ -37,7 +37,9 @@ public class Directive {
             case "RESW":
                 this.size = 3 * Integer.parseInt(operand);
                 break;
-           
+            case "EQU":
+                this.size = 0;
+                break;
             default:
                 break;
         }
@@ -47,6 +49,10 @@ public class Directive {
         //String str = name.toUpperCase();
         name = name.toUpperCase();
         operand = operand.toUpperCase();
+        if(name.equals("EQU")) {
+            // TODO
+            return true;
+        }
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
@@ -101,10 +107,10 @@ public class Directive {
             case "BASE":
             case "NOBASE":
             case "LTORG":
+            case "EQU":
                 return "";
             case "RESW":
             case "RESB":
-            
                 return " ";
             case "BYTE":
                 int n = this.operand.length();

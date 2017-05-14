@@ -139,7 +139,12 @@ public class Line {
                 
             }
             if (operands_str != null && operands_str.length() > 0) {
-                operands = new ArrayList(Arrays.asList(operands_str.split(",")));
+                if(mnemonic.equals("EQU")) {
+                    // TODO: Split string over '+', '-', '*', '/'
+                    operands = new ArrayList(Arrays.asList(operands_str.split("*")));
+                }
+                else
+                    operands = new ArrayList(Arrays.asList(operands_str.split(",")));
             }
 
             /**

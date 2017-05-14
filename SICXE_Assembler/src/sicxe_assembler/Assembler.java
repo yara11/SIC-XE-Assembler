@@ -72,14 +72,11 @@ public class Assembler {
                     cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
                     //System.out.print(cur_line.getObjectCode(symbolTable));
                 }
-                if(Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")){
-                    
-                addLit();
-                                   
-                    
-                    
                 
+                if(Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")){
+                    addLit();
                 }
+                
                 // TODO: VALIDATE "END OPERAND" OR "LABEL"
                 if (Line.hamada(line, 9, 14).toUpperCase().equals("END")) {
                     cur_line.unError();
@@ -100,10 +97,27 @@ public class Assembler {
                 if (!cur_line.isValid()) {
                     genPass2 = false;
                 }
+                
                 // Update symbol table
                 if (cur_line.getLabel() != null) {
-                    symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6));
-                    symW.write(String.format("%-16s       %s\n", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
+                    // is symbol (constant) ->
+                    // case of EQU, ORG
+                    if(cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("EQU")){
+                        String operands_str = Line.hamada(line, 17, 34);
+                        if(operands_str.equals("*"))
+                            symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'R');
+                        else if(isDecimal(operands_str)) 
+                            symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(operands_str), 6), 'A');
+                        else {
+                            // is expression
+                            
+                        }
+                    }
+                    else {
+                        // is label -> address
+                        symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'A');
+                        symW.write(String.format("%-16s       %s\n", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
+                    }
                 }
                 // Update location counter
                 LOCCTR.increment(cur_line.getSize());
@@ -450,6 +464,12 @@ public class Assembler {
         // Assembler start = new Assembler();
         // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }
+    }
+    Boolean isDecimal(String str) {
+        for(int i = 0; i < str.length(); i++)
+            if(!Character.isDigit(str.charAt(i)))
+                return false;
+        return true;
     }
 
 }
