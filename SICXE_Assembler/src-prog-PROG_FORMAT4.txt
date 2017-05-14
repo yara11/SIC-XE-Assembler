@@ -4,15 +4,15 @@
   4   001005            STCH    ADDR2
   5   001008            JSUB    GETPAIR
   6   00100B            STCH    ADDR3
-  7   00100E            +LDB    ADDR
+  7   00100E            +LDB    ADDR1
   8   001012            JSUB    GETPAIR
   9   001015            STCH    ADDR2 
  10   001018            JSUB    GETPAIR
  11   00101B            STCH    ADDR2
  12   00101E   LOOP     JSUB    GETPAIR
- 13                     BASE    ADDR2
- 14   001021            STCH    ADDR,X
- 15   001024            NOBASE
+ 13                     BASE    ADDR1
+ 14   001021            STCH    ADDR1,X
+ 15   001024            NOBASE 
  16   001024            TIXR    X
  17   001026            J       LOOP
  18   001029   GETPAIR  STL     RTADDR
@@ -21,27 +21,26 @@
  21   001031            STCH    HEX
  22   001034            OR      ORADDR
  23   001037            J       @RTADDR
- 24   00103A   READ     TD      #45
+ 24   00103A   READ     TD      #10
  25   00103D            JEQ     READ 
  26   001040            CLEAR   A
- 27   001042            RD      #870
+ 27   001042            RD      #10
  28   001045            COMP    #48
  29   001048            JLT     EOFCK
  30   00104B            SUB     #48
  31   00104E            COMP    #10
  32   001051            JLT     GOBACK
  33   001054            SUB     #7
- 34   001057   GOBACK   RSUB   
- 35   00105A   EOFCK    COMP    #6
+ 34   001057   GOBACK   RSUB     
+ 35   00105A   EOFCK    COMP    #33
  36   00105D            JEQ     EXIT
  37   001060            COMP    #4
  38   001063            JGT     READ
  39   001066   EXIT     CLEAR   L 
- 40   001068            J       @ADDR 
- 41   00106B   HEX      RESB    1
- 42   00106C   ADDR2    RESB    1
- 43   00106D   ADDR3    RESB    1
- 44   00106E   ORADDR   RESB     2
- 45   001070   RTADDR   RESB    4096
- 46   002070   ADDR     RESB    1
- 47   002071            END     MAIN
+ 40   001068   HEX      RESB    1
+ 41   001069   ADDR2    RESB    1
+ 42   00106A   ADDR3    RESB    1
+ 43   00106B   ORADDR   RESB     2
+ 44   00106D   RTADDR   RESB    4096
+ 45   00206D   ADDR1    RESB    1
+ 46   00206E            END     MAIN

@@ -217,8 +217,9 @@ public class Assembler {
                     int current = hex2dec(linesOfCode.get(i + 1).getAddress());
                     // System.out.print("current " + current);
                     target = TA - current;
-                    //System.out.print("test target" +target);
-                    setBP(target);
+                   //System.out.print("test target" +target);
+                   if(line.getInstr().getFormat() !=4)
+                        setBP(target);
                     //System.out.print("test");
                     
                     //if(line.getInstr().getI() == true && line.getInstr().getN() == false)
@@ -228,7 +229,7 @@ public class Assembler {
                     } else if (b == true && p == false) {
                         target = TA - base;
                         String x = Integer.toBinaryString(target);
-                   // System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
+                    //System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
 
                     }
                     else if (b == false && p == true) {
@@ -282,7 +283,11 @@ public class Assembler {
     public static void setBP(int target) {
         if (enableBase == false) {
            // System.out.println("pcrelatve1");
-
+           if(target >2048 || target <-2047 )
+           {
+               System.out.println("error no base allowed");
+               System.exit(0);
+           }
             b = false;
             p = true;
             //continue;
@@ -290,8 +295,8 @@ public class Assembler {
           //  System.out.println("pcrelatve2");
             b = false;
             p = true;
-        } else if (target < 4096) {
-         //   System.out.println("baserelative");
+        } else /*if (target < 4096)*/ {
+            //System.out.println("baserelative");
             b = true;
             p = false;
         }
@@ -388,7 +393,7 @@ public class Assembler {
 
     public static void main(String[] args) throws IOException {
         
-        String asmFileName = "example5.txt";
+        String asmFileName = "PROG_FORMAT4.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);

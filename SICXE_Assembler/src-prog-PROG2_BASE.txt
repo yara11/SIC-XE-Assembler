@@ -41,7 +41,7 @@
  41   00106A   HEX      RESB    1
  42   00106B   ADDR2    RESB    1
  43   00106C   ADDR3    RESB    1
- 44   00106D   RTADDR   RESB    1
- 45   00106E   ORADDR   RESB    2
- 46   001070   ADDR     RESB    1
- 47   001071            END     MAIN
+ 44   00106D   RTADDR   RESB    4096
+ 45   00206D   ORADDR   RESB    2
+ 46   00206F   ADDR     RESB    1
+ 47   002070            END     MAIN

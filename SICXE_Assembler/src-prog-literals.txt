@@ -1,0 +1,12 @@
+  1   000000   PROG1    START   0000         
+  2   000000            LDX     #0
+  3   000003            LDT     #10
+  4   000006   RLOOP    TD      =X'F1'
+  5   000009            JEQ     RLOOP
+  6   00000C            RD      =X'F1'
+  7   00000F            STCH    RECORD,X
+  8   000012            TIXR    T 
+  9   000014            JLT     RLOOP 
+ 10   000017            LTORG 
+ 11   000017   RECORD   RESB    10
+ 12   000021            END     PROG1 

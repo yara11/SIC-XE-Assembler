@@ -42,7 +42,7 @@ EXIT     CLEAR   L
 HEX      RESB    1
 ADDR2    RESB    1
 ADDR3    RESB    1
-RTADDR   RESB    1
+RTADDR   RESB    4096
 ORADDR   RESB    2
 ADDR     RESB    1
          END     MAIN
