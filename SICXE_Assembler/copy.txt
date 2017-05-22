@@ -1,5 +1,6 @@
-COPY     START   1000
+﻿COPY     START   1000
 FIRST    STL     RETADR
+         BASE    MAXLEN
 CLOOP    JSUB    RDREC
          LDA     LENGTH
          COMP    ZERO
@@ -13,7 +14,7 @@ ENDFIL   LDA     EOF
          JSUB    WRREC
          LDL     RETADR
          RSUB     
-EOF      BYTE    C�EOF�
+EOF      BYTE    C'EOF'
 THREE    WORD    3
 ZERO     WORD    0
 RETADR   RESW    1
@@ -48,5 +49,5 @@ WLOOP    TD      OUTPUT
          JLT     WLOOP
          RSUB	 
 OUTPUT   BYTE    X'05'
-BEGIN    EQU    FIRST-SECOND+LOOP
+BEGIN    EQU     FIRST-EXIT+INPUT
          END     FIRST

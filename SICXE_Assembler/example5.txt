@@ -20,6 +20,8 @@ EOF      BYTE    C'EOF'            454F46
 RETADR   RESW    1
 LENGTH   RESW    1
 BUFFER   RESB    4096
+BUFFEND  EQU     *
+MAXLEN   EQU     BUFFEND
 .
 . READ RECORD INTO BUFFER
 .
@@ -51,4 +53,5 @@ WLOOP    TD      OUTPUT            E32011
          JLT     WLOOP             3B2FEF
          RSUB                      4F0000
 OUTPUT   BYTE    X'05'             05
+BEGIN    EQU      FIRST-SECOND+LOOP
          END     FIRST
