@@ -20,35 +20,37 @@
  20   000033   RETADR   RESW    1
  21   000036   LENGTH   RESW    1
  22   000039   BUFFER   RESB    4096
- 23   001039   .                                                                 
- 24   001039   . READ RECORD INTO BUFFER                                         
+ 23   001039   BUFFEND  EQU     *
+ 24   001039   MAXLEN   EQU     BUFFEND
  25   001039   .                                                                 
- 26   001039   RDREC    CLEAR   X                 B410
- 27   00103B            CLEAR   A                 B400
- 28   00103D            CLEAR   S                 B440
- 29   00103F            +LDT    #4096             75101000
- 30   001043   RLOOP    TD      INPUT             E32019
- 31   001046            JEQ     RLOOP             332FFA
- 32   001049            RD      INPUT             DB2013
- 33   00104C            COMPR   A,S               A004
- 34   00104E            JEQ     EXIT              332008
- 35   001051            STCH    BUFFER,X          57C003
- 36   001054            TIXR    T                 B850
- 37   001056            JLT     RLOOP             3B2FEA
- 38   001059   EXIT     STX     LENGTH            134000
- 39   00105C            RSUB                      4F0000
- 40   00105F   INPUT    BYTE    X'F1'             F1
- 41   001060   .                                                                 
- 42   001060   . SUBROUTINE TO WRITE RECORD FROM BUFFER                          
+ 26   001039   . READ RECORD INTO BUFFER                                         
+ 27   001039   .                                                                 
+ 28   001039   RDREC    CLEAR   X                 B410
+ 29   00103B            CLEAR   A                 B400
+ 30   00103D            CLEAR   S                 B440
+ 31   00103F            +LDT    #4096             75101000
+ 32   001043   RLOOP    TD      INPUT             E32019
+ 33   001046            JEQ     RLOOP             332FFA
+ 34   001049            RD      INPUT             DB2013
+ 35   00104C            COMPR   A,S               A004
+ 36   00104E            JEQ     EXIT              332008
+ 37   001051            STCH    BUFFER,X          57C003
+ 38   001054            TIXR    T                 B850
+ 39   001056            JLT     RLOOP             3B2FEA
+ 40   001059   EXIT     STX     LENGTH            134000
+ 41   00105C            RSUB                      4F0000
+ 42   00105F   INPUT    BYTE    X'F1'             F1
  43   001060   .                                                                 
- 44   001060   WRREC    CLEAR   X                 B410
- 45   001062            LDT     LENGTH            774000
- 46   001065   WLOOP    TD      OUTPUT            E32011
- 47   001068            JEQ     WLOOP             332FFA
- 48   00106B            LDCH    BUFFER,X          53C003
- 49   00106E            WD      OUTPUT            DF2008
- 50   001071            TIXR    T                 B850
- 51   001073            JLT     WLOOP             3B2FEF
- 52   001076            RSUB                      4F0000
- 53   001079   OUTPUT   BYTE    X'05'             05
- 54   00107A            END     FIRST
+ 44   001060   . SUBROUTINE TO WRITE RECORD FROM BUFFER                          
+ 45   001060   .                                                                 
+ 46   001060   WRREC    CLEAR   X                 B410
+ 47   001062            LDT     LENGTH            774000
+ 48   001065   WLOOP    TD      OUTPUT            E32011
+ 49   001068            JEQ     WLOOP             332FFA
+ 50   00106B            LDCH    BUFFER,X          53C003
+ 51   00106E            WD      OUTPUT            DF2008
+ 52   001071            TIXR    T                 B850
+ 53   001073            JLT     WLOOP             3B2FEF
+ 54   001076            RSUB                      4F0000
+ 55   001079   OUTPUT   BYTE    X'05'             05
+ 56   00107A            END     FIRST

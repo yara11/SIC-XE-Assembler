@@ -11,7 +11,14 @@ package sicxe_assembler;
  */
 public class SymbolTableEntry {
     private String symbol, value;
+    private char flag; // 'R' or 'A'
 
+    public SymbolTableEntry(String symbol, String value, char flag) {
+        this.symbol = symbol;
+        this.value = value;
+        this.flag = flag;
+    }
+    
     public String getSymbol() {
         return symbol;
     }
@@ -19,15 +26,17 @@ public class SymbolTableEntry {
     public String getValue() {
         return value;
     }
+    
+    public int getDecimalValue() {
+        return Integer.parseInt(value, 16);
+    }
 
     public char getFlag() {
         return flag;
     }
-    private char flag;
     
-    public SymbolTableEntry(String symbol, String value, char flag) {
-        this.symbol = symbol;
-        this.value = value;
-        this.flag = flag;
+    @Override
+    public String toString() {
+        return String.format("%-16s %-5c  %-10s\n", symbol, flag, value);
     }
 }

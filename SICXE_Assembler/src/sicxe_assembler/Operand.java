@@ -59,7 +59,7 @@ public class Operand {
             case 'v':
                 return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
             default:
-                String loc = symbolTable.getLocation(name).substring(1);
+                String loc = symbolTable.getEntry(name).getValue().substring(1);
                 //System.out.print("target  "+Assembler.target);
                 //System.out.print(loc);
                 return loc;

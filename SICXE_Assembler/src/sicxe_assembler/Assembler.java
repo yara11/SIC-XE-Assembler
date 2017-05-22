@@ -7,6 +7,10 @@ import java.io.IOException;
 import static java.lang.Math.*;
 import java.util.ArrayList;
 import java.math.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 public class Assembler {
 
     private final String regFileName = "register_set.txt";
@@ -104,20 +108,37 @@ public class Assembler {
                     // case of EQU, ORG
                     if(cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("EQU")){
                         String operands_str = Line.hamada(line, 17, 34);
-                        if(operands_str.equals("*"))
+                        if(operands_str.equals("[*]")){
                             symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'R');
-                        else if(isDecimal(operands_str)) 
-                            symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(operands_str), 6), 'A');
-                        else {
-                            // is expression
-                            
                         }
+                        else {
+                            String[]ttt = operands_str.split("(+)|(-)|(*)|(/)");
+                            int A = 0, R = 0;
+                            for(String s: ttt) {
+                                if(symbolTable.isLabel(s)) {
+                                    operands_str.replaceAll(operands_str, Integer.toString(symbolTable.getEntry(s).getDecimalValue()));
+                                    if(symbolTable.getEntry(s).getFlag() == 'A')
+                                        A++;
+                                    else R++;
+                                }
+                            }
+                            try {
+                                String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                                x = x.substring(0,x.length()-2);
+                                symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A? 'R' : 'A');
+                            } catch (ScriptException ex) {
+                                Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                    else if(cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("ORG")) {
+                        
                     }
                     else {
                         // is label -> address
                         symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'A');
-                        symW.write(String.format("%-16s       %s\n", cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6)));
                     }
+                    symW.write(symbolTable.getEntry(cur_line.getLabel()).toString());
                 }
                 // Update location counter
                 LOCCTR.increment(cur_line.getSize());
@@ -191,7 +212,7 @@ public class Assembler {
         if (symbolTable.isLabel(str) == null) {
             baseError = true;
         } else {
-            return hex2dec(symbolTable.getLocation(str));
+            return hex2dec(symbolTable.getEntry(str).getValue());
         }
 
         return 0;
@@ -407,7 +428,7 @@ public class Assembler {
 
     public static void main(String[] args) throws IOException {
         
-        String asmFileName = "PROG_FORMAT4.txt";
+        String asmFileName = "copy.txt";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);

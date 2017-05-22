@@ -13,13 +13,29 @@ public class SymbolTable {
     }
     
     // Will return null if object is not found
-    public String getLocation(String symbol) {
+    /*public String getValue(String symbol) {
         for(SymbolTableEntry e: SymTable) {
             if(e.getSymbol().equals(symbol))
                 return e.getValue();
         }
         return null;
+    }*/
+    
+    public SymbolTableEntry getEntry(String symbol) {
+        for(SymbolTableEntry e: SymTable) {
+            if(e.getSymbol().equals(symbol))
+                return e;
+        }
+        return null;
     }
+    
+    /*public String getDecimalValue(String symbol) {
+        for(SymbolTableEntry e: SymTable) {
+            if(e.getSymbol().equals(symbol))
+                return Integer.toString(e.getDecimalValue());
+        }
+        return null;
+    }*/
     
     public Boolean isLabel(String symbol) {
         for(SymbolTableEntry e: SymTable) {
@@ -28,6 +44,14 @@ public class SymbolTable {
         }
         return false;
     }
+    
+    /*public String getEntry(String symbol) {
+        for(SymbolTableEntry e: SymTable) {
+            if(e.getSymbol().equals(symbol))
+                return e.toString();
+        }
+        return "";
+    }*/
     //
     //elmfrood msh hn7tagha delwa2ty
     /*

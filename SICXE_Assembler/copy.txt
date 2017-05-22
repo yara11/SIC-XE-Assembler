@@ -13,7 +13,7 @@ ENDFIL   LDA     EOF
          JSUB    WRREC
          LDL     RETADR
          RSUB     
-EOF      BYTE    C’EOF’
+EOF      BYTE    Cï¿½EOFï¿½
 THREE    WORD    3
 ZERO     WORD    0
 RETADR   RESW    1
@@ -31,7 +31,7 @@ RLOOP    TD      INPUT
          JEQ     EXIT
          STCH    BUFFER,X
          TIX     MAXLEN
-         JLT     RLOOP
+         JLT     RLOOP	
 EXIT     STX     LENGTH
          RSUB	 
 INPUT    BYTE    X'F1'
@@ -47,5 +47,6 @@ WLOOP    TD      OUTPUT
          TIX     LENGTH
          JLT     WLOOP
          RSUB	 
-OUTPUT   BYTE    X'05'	
-END      FIRST
+OUTPUT   BYTE    X'05'
+BEGIN    EQU    FIRST-SECOND+LOOP
+         END     FIRST

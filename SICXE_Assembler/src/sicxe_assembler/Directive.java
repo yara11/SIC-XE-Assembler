@@ -53,6 +53,10 @@ public class Directive {
             // TODO
             return true;
         }
+        if(name.equals("ORG")) {
+            // TODO
+            return true;
+        }
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
