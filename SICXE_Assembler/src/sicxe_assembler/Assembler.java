@@ -18,7 +18,19 @@ public class Assembler {
     private static Boolean b, p;
     public static int target;
     public static ArrayList<Lit> literals = new ArrayList<>();
-
+    Boolean org_enable = false;
+    int prev_locctr;
+    // private String asmFileName;
+    private ArrayList<Line> linesOfCode = new ArrayList<>();
+    private static SymbolTable symbolTable = new SymbolTable();
+    private LocationCounter LOCCTR = new LocationCounter(0);
+    private static boolean enableBase = false;
+    private static int base;
+    //private static String baseLine;
+    private static boolean baseError = false;
+    private static ArrayList<Line> baseLines = new ArrayList<>();
+    private static int baseCounter = 0;
+    
     public static Boolean getB() {
         //System.out.print("oide");
         return b;
@@ -35,16 +47,6 @@ public class Assembler {
     public static Boolean getP() {
         return p;
     }
-    // private String asmFileName;
-    private ArrayList<Line> linesOfCode = new ArrayList<>();
-    private static SymbolTable symbolTable = new SymbolTable();
-    private LocationCounter LOCCTR = new LocationCounter(0);
-    private static boolean enableBase = false;
-    private static int base;
-    //private static String baseLine;
-    private static boolean baseError = false;
-    private static ArrayList<Line> baseLines = new ArrayList<>();
-    private static int baseCounter = 0;
 
     public Assembler() {
         // Load the registers file
@@ -98,6 +100,46 @@ public class Assembler {
                     line_no++;
                     continue;
                 }
+                    if(Line.hamada(line, 9, 14).toUpperCase().equals("ORG")) {
+                        String operands_str = Line.hamada(line, 16, line.length()-1);
+                        if(operands_str.length() > 0) {
+                        String[] ttt = operands_str.split("[-+*/]");
+                        int A = 0, R = 0;
+                        for(String s: ttt) {
+                            if(symbolTable.isLabel(s)) {
+                                operands_str = operands_str.replaceAll(s, Integer.toString(symbolTable.getEntry(s).getDecimalValue()));
+                                if(symbolTable.getEntry(s).getFlag() == 'A')
+                                    A++;
+                                else R++;
+                            }
+                            else if(isDecimal(s))
+                            {
+                                //do nothing
+                            }
+                            else
+                            {
+                                System.out.println("ERROR: symbol not found");
+                                genPass2 = false;
+                            }
+                        }
+                            try {
+                                //System.err.println("hena elmoshkella" + operands_str);
+                                String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                                x = x.substring(0,x.length()-2);
+                                prev_locctr = LOCCTR.getLocation();
+                                org_enable = true;
+                                LOCCTR.setLocation(Integer.parseInt(x));
+                            } catch (ScriptException ex) {
+                                Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } else if(org_enable) {
+                            // System.out.println("La2");
+                            org_enable = false;
+                            LOCCTR.setLocation(prev_locctr);
+                        } else {
+                            System.out.println("Error wallahy");
+                        }
+                    }
                 if (!cur_line.isValid()) {
                     genPass2 = false;
                 }
@@ -112,17 +154,11 @@ public class Assembler {
                             symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'R');
                         }
                         else {
-                            //String[] result = s.split("[-+*/]");
-                            
                             String[] ttt = operands_str.split("[-+*/]");
-                           
-                            String y = operands_str;
                             int A = 0, R = 0;
                             for(String s: ttt) {
                                 if(symbolTable.isLabel(s)) {
-                                    //System.err.println("ana hennaaa " +s);
                                     operands_str = operands_str.replaceAll(s, Integer.toString(symbolTable.getEntry(s).getDecimalValue()));
-                                    //System.err.println("hennaa " + operands_str);
                                     if(symbolTable.getEntry(s).getFlag() == 'A')
                                         A++;
                                     else R++;
@@ -140,15 +176,12 @@ public class Assembler {
                             try {
                                 //System.err.println("hena elmoshkella" + operands_str);
                                 String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                                x = x.substring(0,x.length()-2);
+                                //x = x.substring(0,x.length()-2);
                                 symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A? 'R' : 'A');
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }
-                    else if(cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("ORG")) {
-                        
                     }
                     else {
                         // is label -> address
@@ -294,7 +327,7 @@ public class Assembler {
                         System.out.println("error target base out of bounds");
                         System.exit(0);
                     }
-                    String t = Integer.toBinaryString(target);
+                    //String t = Integer.toBinaryString(target);
                    //System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
 
                 }

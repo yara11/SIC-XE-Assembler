@@ -6,8 +6,8 @@
   6   00000D            JLT     LOOP
   7   000010            +STA    #POS
   8   000014            ORG     2000
-  9   000014   BEGIN    EQU     FIRST+LOOP
- 10   000014   DUMP     RESW    1
- 11   000017   FINAL    EQU     LOOP*300 
- 12   000017   POS      EQU     FINAL-BEGIN
- 13   000017            END     SUM  
+  9   0007D0   BEGIN    EQU     FIRST+LOOP
+ 10   0007D0   DUMP     RESW    1
+ 11   0007D3   FINAL    EQU     LOOP*300 
+ 12   0007D3   POS      EQU     FINAL-BEGIN
+ 13   0007D3            END     SUM  

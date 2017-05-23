@@ -112,6 +112,7 @@ public class Directive {
             case "NOBASE":
             case "LTORG":
             case "EQU":
+            case "ORG":
                 return "";
             case "RESW":
             case "RESB":
