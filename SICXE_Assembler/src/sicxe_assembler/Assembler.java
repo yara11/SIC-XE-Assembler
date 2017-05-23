@@ -123,7 +123,9 @@ public class Assembler {
                         }
                         try {
                             // System.err.println("hena elmoshkella" + operands_str);
-                            String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                            String x;
+                            x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                            x = x.substring(0, x.length()-2);
                             // x = x.substring(0, x.length() - 2);
                             prev_locctr = LOCCTR.getLocation();
                             org_enable = true;
@@ -173,7 +175,7 @@ public class Assembler {
                             try {
                                 //System.err.println("hena elmoshkella" + operands_str);
                                 String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                                //x = x.substring(0,x.length()-2);
+                                x = x.substring(0,x.length()-2);
                                 symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A ? 'R' : 'A');
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
