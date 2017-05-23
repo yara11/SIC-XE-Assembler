@@ -1,0 +1,45 @@
+  1   000000   FIBO     START   0
+  2   000000   FIRST    LDT     #1
+  3   000003            LDS     #10
+  4                     BASE    LENGTH
+  5   000006            +JSUB   RDREC
+  6   00000A            +JSUB   WRREC
+  7   00000E            COMPR    A,S
+  8   000010            CLEAR    S
+  9   000012   LENGTH   RESW    1
+ 10   000015   .                                                                 
+ 11   000015   . SUBROUTINE RDREC                                                
+ 12   000015   .                                                                 
+ 13   000015   RDREC    CLEAR   A  
+ 14   000017   RLOOP    TD      INPUT
+ 15   00001A            JEQ     RLOOP
+ 16   00001D            RD      INPUT
+ 17   000020            COMPR   A,T
+ 18   000022            JLT     RLOOP
+ 19   000025            COMPR   A,S
+ 20   000027            JGT     RLOOP
+ 21   00002A            STA     LENGTH
+ 22   00002D            +RSUB
+ 23   000031   INPUT    BYTE    C'TEST STRING'
+ 24   00003C   .                                                                 
+ 25   00003C   .SUBROUTINE WDREC                                                 
+ 26   00003C   .                                                                 
+ 27   00003C   WRREC    LDX     #0
+ 28   00003F            LDS     #1
+ 29   000042            LDA     #0
+ 30   000045            LDT     LENGTH
+ 31   000048   WLOOP    TD      OUTPUT
+ 32   00004B            JEQ     WLOOP
+ 33   00004E            WD      OUTPUT
+ 34   000051            ADDR    S,A
+ 35   000053            STA     VALUE1
+ 36   000056            STS     VALUE2,X
+ 37   000059            LDA     #VALUE2
+ 38   00005C            LDS     VALUE1
+ 39   00005F            TIXR    T 
+ 40   000061            JLT     WLOOP
+ 41   000064   BUFFER   RESB    2500
+ 42   000A28   OUTPUT   BYTE    X'05'
+ 43   000A29   VALUE1   RESW    1
+ 44   000A2C   VALUE2   RESW    1
+ 45   000A2F            END     FIRST

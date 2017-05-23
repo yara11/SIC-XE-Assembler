@@ -2,7 +2,19 @@ package sicxe_assembler;
 
 public class Directive {
     private String name;
+
+    public String getName() {
+        return name;
+    }
     private String operand;
+
+    public String getOperand() {
+        return operand;
+    }
+
+    public void setOperand(String operand) {
+        this.operand = operand;
+    }
     private int size;
     
     public Directive(String name, String operand) {
@@ -20,12 +32,12 @@ public class Directive {
                 this.size = 3;
                 break;
             case "RESB":
-                this.size = 1 * Integer.parseInt(operand.trim());
+                this.size = Integer.parseInt(operand);
                 break;
             case "RESW":
-                this.size = 3 * Integer.parseInt(operand.trim());
+                this.size = 3 * Integer.parseInt(operand);
                 break;
-            case "BASE":
+            case "EQU":
                 this.size = 0;
                 break;
             default:
@@ -37,10 +49,18 @@ public class Directive {
         //String str = name.toUpperCase();
         name = name.toUpperCase();
         operand = operand.toUpperCase();
+        if(name.equals("EQU")) {
+            // TODO
+            return true;
+        }
+        if(name.equals("ORG")) {
+            // TODO
+            return true;
+        }
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        else if(name.equals("BASE")){
+        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end") || name.equalsIgnoreCase("ltorg")){
             return true;
         }
         else if(name.equals("BYTE")) {
@@ -80,4 +100,42 @@ public class Directive {
     }
     return true;
 }
+    
+    
+    public String getObjectCode(SymbolTable symbolTable) {
+                    //System.out.println("test2");
+
+        switch(name){
+            case "START":
+            case "END":
+            case "BASE":
+            case "NOBASE":
+            case "LTORG":
+            case "EQU":
+            case "ORG":
+                return "";
+            case "RESW":
+            case "RESB":
+                return " ";
+            case "BYTE":
+                int n = this.operand.length();
+                if(operand.charAt(0) == 'X'){
+                    return operand.substring(2, operand.length()-1);
+                }
+                else {
+                    String ret = "";
+                    for(int i = 2; i < this.operand.length() - 1; i++) {
+                        int ascii = (int)this.operand.charAt(i);
+                        ret = ret + Assembler.decToHex(ascii, 2);
+                    }
+                    return ret;
+                }
+            case "WORD":
+                return Assembler.decToHex(Integer.parseInt(operand), 6);
+            
+        }
+    
+    
+        return null;
+    }
 }

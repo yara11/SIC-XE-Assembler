@@ -1,13 +1,7 @@
-PALIND                 000000
-FIRST                  000000
-CLOOP                  000003
-LENGTH                 000019
-RDREC                  00001c
-RLOOP                  000026
-EXIT1                  00003c
-INPUT                  000042
-CMPREC                 000043
-EXIT2                  000062
-ERROR                  000068
-RESULT                 00006b
-BUFFER                 00006e
+MAIN             A      000000    
+FIRST            A      000000    
+LOOP             A      000008    
+BEGIN            A      000008    
+DUMP             A      002025    
+FINAL            A      000960    
+POS              A      000958    

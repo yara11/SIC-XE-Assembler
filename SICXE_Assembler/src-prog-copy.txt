@@ -1,0 +1,53 @@
+  1   001000   ﻿COPY     START   1000
+  2   001000   FIRST    STL     RETADR
+  3                     BASE    MAXLEN
+  4   001003   CLOOP    JSUB    RDREC
+  5   001006            LDA     LENGTH
+  6   001009            COMP    ZERO
+  7   00100C            JEQ     ENDFIL
+  8   00100F            JSUB    WRREC
+  9   001012            J       CLOOP
+ 10   001015   ENDFIL   LDA     EOF
+ 11   001018            STA     BUFFER
+ 12   00101B            LDA     THREE
+ 13   00101E            STA     LENGTH
+ 14   001021            JSUB    WRREC
+ 15   001024            LDL     RETADR
+ 16   001027            RSUB     
+ 17   00102A   EOF      BYTE    C'EOF'
+ 18   00102D   THREE    WORD    3
+ 19   001030   ZERO     WORD    0
+ 20   001033   RETADR   RESW    1
+ 21   001036   LENGTH   RESW    1
+ 22   001039   BUFFER   RESB    4096
+ 23   002039   . 	                                                               
+ 24   002039   .	SUBROUTINE TO READ RECORD INTO BUFFER                           
+ 25   002039   . 		                                                              
+ 26   002039   RDREC    LDX     ZERO
+ 27   00203C            LDA     ZERO
+ 28   00203F   RLOOP    TD      INPUT
+ 29   002042            JEQ     RLOOP
+ 30   002045            RD      INPUT 
+ 31   002048            COMP    ZERO
+ 32   00204B            JEQ     EXIT
+ 33   00204E            STCH    BUFFER,X
+ 34   002051            TIX     MAXLEN
+ 35   002054            JLT     RLOOP	
+ 36   002057   EXIT     STX     LENGTH
+ 37   00205A            RSUB	 
+ 38   00205D   INPUT    BYTE    X'F1'
+ 39   00205E   MAXLEN   WORD    4096
+ 40   002061   .                                                                 
+ 41   002061   .	SUBROUTINE TO WRITE RECORD FROM BUFFER                          
+ 42   002061   .		                                                               
+ 43   002061   WRREC    LDX     ZERO
+ 44   002064   WLOOP    TD      OUTPUT
+ 45   002067            JEQ     WLOOP
+ 46   00206A            LDCH    BUFFER,X
+ 47   00206D            WD      OUTPUT
+ 48   002070            TIX     LENGTH
+ 49   002073            JLT     WLOOP
+ 50   002076            RSUB	 
+ 51   002079   OUTPUT   BYTE    X'05'
+ 52   00207A   BEGIN    EQU     FIRST-EXIT+INPUT
+ 53   00207A            END     FIRST

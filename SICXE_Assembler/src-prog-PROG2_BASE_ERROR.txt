@@ -1,0 +1,47 @@
+  1   001000   MAIN     START   1000         
+  2   001000            CLEAR   X
+  3   001002            JSUB    GETPAIR
+  4   001005            STCH    ADDR2
+  5   001008            JSUB    GETPAIR
+  6   00100B            STCH    ADDR3
+  7   00100E            LDB     ADDR1
+  8   001011            JSUB    GETPAIR
+  9   001014            STCH    ADDR1 
+ 10   001017            JSUB    GETPAIR
+ 11   00101A            STCH    ADDR2
+ 12   00101D   LOOP     JSUB    GETPAIR
+ 13                     BASE    ADDR1
+ 14   001020            STCH    ADDR1,X
+ 15   001023            NOBASE 
+ 16   001023            TIXR    X
+ 17   001025            J       LOOP
+ 18   001028   GETPAIR  STL     RTADDR
+ 19   00102B            JSUB    READ
+ 20   00102E            SHIFTL  A,4
+ 21   001030            STCH    HEX
+ 22   001033            OR      ORADDR
+ 23   001036            J       @RTADDR
+ 24   001039   READ     TD      #10
+ 25   00103C            JEQ     READ 
+ 26   00103F            CLEAR   A
+ 27   001041            RD      #10
+ 28   001044            COMP    #48
+ 29   001047            JLT     EOFCK
+ 30   00104A            SUB     #48
+ 31   00104D            COMP    #10
+ 32   001050            JLT     GOBACK
+ 33   001053            SUB     #7
+ 34   001056   GOBACK   RSUB     
+ 35   001059   EOFCK    COMP    #33
+ 36   00105C            JEQ     EXIT
+ 37   00105F            COMP    #4
+ 38   001062            JGT     READ
+ 39   001065   EXIT     CLEAR   L 
+ 40   001067            J       @ADDR1 
+ 41   00106A   HEX      RESB    1
+ 42   00106B   ADDR2    RESB    1
+ 43   00106C   ADDR3    RESB    1
+ 44   00106D   ORADDR   RESB     2
+ 45   00106F   RTADDR   RESB    4096
+ 46   00206F   ADDR1    RESB    1
+ 47   002070            END     MAIN

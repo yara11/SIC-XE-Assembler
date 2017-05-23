@@ -1,19 +1,19 @@
   1   001000   MAIN     START   1000
-  2                     BASE    ADDR1      
-  3   001000            CLEAR   X 
+  2                     BASE    ADDR      
+  3   001000            CLEAR   X
   4   001002            JSUB    GETPAIR
   5   001005            STCH    ADDR2
   6   001008            JSUB    GETPAIR
   7   00100B            STCH    ADDR3
-  8   00100E            LDB     ADDR1
+  8   00100E            LDB     ADDR
   9   001011            JSUB    GETPAIR
- 10   001014            STCH    ADDR1 
+ 10   001014            STCH    ADDR 
  11   001017            JSUB    GETPAIR
  12   00101A            STCH    ADDR2
  13   00101D   LOOP     JSUB    GETPAIR
- 14   001020            STCH    ADDR1,X
- 15   001023            NOBASE 
- 16   001023            TIXR    X 
+ 14   001020            STCH    ADDR,X
+ 15   001023            NOBASE
+ 16   001023            TIXR    X
  17   001025            J       LOOP
  18   001028   GETPAIR  STL     RTADDR
  19   00102B            JSUB    READ
@@ -21,10 +21,10 @@
  21   001030            STCH    HEX
  22   001033            OR      ORADDR
  23   001036            J       @RTADDR
- 24   001039   READ     TD      #X'F1'
+ 24   001039   READ     TD      #5
  25   00103C            JEQ     READ 
- 26   00103F            CLEAR   A 
- 27   001041            RD      #X'F1'
+ 26   00103F            CLEAR   A
+ 27   001041            RD      #43
  28   001044            COMP    #48
  29   001047            JLT     EOFCK
  30   00104A            SUB     #48
@@ -32,17 +32,16 @@
  32   001050            JLT     GOBACK
  33   001053            SUB     #7
  34   001056   GOBACK   RSUB    
- 35   001059   EOFCK    COMP    #33
+ 35   001059   EOFCK    COMP    #7
  36   00105C            JEQ     EXIT
  37   00105F            COMP    #4
  38   001062            JGT     READ
- 39   001065   EXIT     CLEAR   L  
- 40   001067            J       @ADDR1 
+ 39   001065   EXIT     CLEAR   L 
+ 40   001067            J       @ADDR 
  41   00106A   HEX      RESB    1
  42   00106B   ADDR2    RESB    1
  43   00106C   ADDR3    RESB    1
- 44   00106D   ORADDR   REB     2
-         ***Error: mnemonic REB is undefined
- 45   00106D   RTADDR   RESB    4096
- 46   00206D   ADDR1    RESB    1
- 47   00206E            END     MAIN
+ 44   00106D   RTADDR   RESB    4096
+ 45   00206D   ORADDR   RESB    2
+ 46   00206F   ADDR     RESB    1
+ 47   002070            END     MAIN

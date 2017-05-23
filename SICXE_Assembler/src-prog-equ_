@@ -1,0 +1,10 @@
+  1   000000   MAIN     START   0000         
+  2   000000   FIRST    +LDA    #BEGIN
+  3   000004   SECOND   +LDX    #FINAL
+  4   000008   LOOP     ADDR    X,A
+  5   00000A            TIX     #11
+  6   00000D            JLT     LOOP
+  7   000010   BEGIN    EQU     FIRST-SECOND+LOOP
+  8   000010   DUMP     RESW    100
+  9   00013C   FINAL    EQU     LOOP+SECOND-DUMP-BEGIN 
+ 10   00013C            END     SUM  

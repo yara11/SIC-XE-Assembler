@@ -1,0 +1,22 @@
+  1   000000   PROG1    START  0000         
+  2   000000            LDX    #0
+  3   000003            LD     #10
+         ***Error: mnemonic LD is undefined
+  4   000003   RLOOP    TD     INDEV
+  5   000006            JEQ    RLOOP
+  6   000009            RD     INDEV 
+  7   00000C            STCH   RECORD,X
+  8   00000F            TXR    T 
+         ***Error: mnemonic TXR is undefined
+  9   00000F            JLT    RLOOP
+ 10   000012   DUMP     BTE    1
+         ***Error: mnemonic BTE is undefined
+ 11   000012   DUMP     RESB   MO@3!22
+         ***Error: mnemonic RESB is undefined
+ 12   000012   STRING   RESB   'FOOPR'  
+         ***Error: mnemonic RESB is undefined
+ 13   000012   INDEV    BYTE   X'F1' 
+         ***Error: mnemonic BYTE is undefined
+ 14   000012   RECORD   RESB   100
+ 15   000012            ED     PROG1
+         ***Error: mnemonic ED is undefined

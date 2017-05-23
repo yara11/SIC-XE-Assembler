@@ -5,4 +5,4 @@
   5   00000D            TIXR    T
   6   00000F            JLT     MOVECH
   7   000012   STR1     BYTE    C'TEST STRING'
-  8   00001C   STR2     RESB    11
+  8   00001D   STR2     RESB    11
