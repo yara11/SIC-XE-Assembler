@@ -15,7 +15,14 @@ public class LocationCounter {
     public int getLocation() {
         return this.current_loc;
     }
+    
+    // takes decimal integer
     public void setLocation(int location) {
         this.current_loc = location;
+    }
+    
+    // takes hexadecimal string
+    public void setLocation(String location) {
+        this.current_loc = Integer.parseInt(location, 16);
     }
 }

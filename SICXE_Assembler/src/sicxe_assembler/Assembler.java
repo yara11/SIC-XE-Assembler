@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 public class Assembler {
 
     private final String regFileName = "register_set.txt";
@@ -30,7 +31,7 @@ public class Assembler {
     private static boolean baseError = false;
     private static ArrayList<Line> baseLines = new ArrayList<>();
     private static int baseCounter = 0;
-    
+
     public static Boolean getB() {
         //System.out.print("oide");
         return b;
@@ -78,11 +79,11 @@ public class Assembler {
                     cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
                     //System.out.print(cur_line.getObjectCode(symbolTable));
                 }
-                
-                if(Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")){
+
+                if (Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")) {
                     addLit();
                 }
-                
+
                 // TODO: VALIDATE "END OPERAND" OR "LABEL"
                 if (Line.hamada(line, 9, 14).toUpperCase().equals("END")) {
                     cur_line.unError();
@@ -100,75 +101,71 @@ public class Assembler {
                     line_no++;
                     continue;
                 }
-                    if(Line.hamada(line, 9, 14).toUpperCase().equals("ORG")) {
-                        String operands_str = Line.hamada(line, 16, line.length()-1);
-                        if(operands_str.length() > 0) {
+                if (Line.hamada(line, 9, 14).toUpperCase().equals("ORG")) {
+                    String operands_str = Line.hamada(line, 16, line.length() - 1);
+                    if (operands_str.length() > 0) {
                         String[] ttt = operands_str.split("[-+*/]");
                         int A = 0, R = 0;
-                        for(String s: ttt) {
-                            if(symbolTable.isLabel(s)) {
+                        for (String s : ttt) {
+                            if (symbolTable.isLabel(s)) {
                                 operands_str = operands_str.replaceAll(s, Integer.toString(symbolTable.getEntry(s).getDecimalValue()));
-                                if(symbolTable.getEntry(s).getFlag() == 'A')
+                                if (symbolTable.getEntry(s).getFlag() == 'A') {
                                     A++;
-                                else R++;
-                            }
-                            else if(isDecimal(s))
-                            {
+                                } else {
+                                    R++;
+                                }
+                            } else if (isDecimal(s)) {
                                 //do nothing
-                            }
-                            else
-                            {
+                            } else {
                                 System.out.println("ERROR: symbol not found");
                                 genPass2 = false;
                             }
                         }
-                            try {
-                                //System.err.println("hena elmoshkella" + operands_str);
-                                String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                                x = x.substring(0,x.length()-2);
-                                prev_locctr = LOCCTR.getLocation();
-                                org_enable = true;
-                                LOCCTR.setLocation(Integer.parseInt(x));
-                            } catch (ScriptException ex) {
-                                Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        } else if(org_enable) {
-                            // System.out.println("La2");
-                            org_enable = false;
-                            LOCCTR.setLocation(prev_locctr);
-                        } else {
-                            System.out.println("Error wallahy");
+                        try {
+                            // System.err.println("hena elmoshkella" + operands_str);
+                            String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                            // x = x.substring(0, x.length() - 2);
+                            prev_locctr = LOCCTR.getLocation();
+                            org_enable = true;
+                            LOCCTR.setLocation(x);
+                        } catch (ScriptException ex) {
+                            Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        //LOCCTR.setLocation(operands_str);
+                    } else if (org_enable) {
+                        // System.out.println("La2");
+                        org_enable = false;
+                        LOCCTR.setLocation(prev_locctr);
+                    } else {
+                        System.out.println("Error wallahy");
                     }
+                }
                 if (!cur_line.isValid()) {
                     genPass2 = false;
                 }
-                
+
                 // Update symbol table
                 if (cur_line.getLabel() != null) {
                     // is symbol (constant) ->
                     // case of EQU, ORG
-                    if(cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("EQU")){
-                        String operands_str = Line.hamada(line, 16, line.length()-1);
-                        if(operands_str.equals("[*]")){
+                    if (cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("EQU")) {
+                        String operands_str = Line.hamada(line, 16, line.length() - 1);
+                        if (operands_str.equals("[*]")) {
                             symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'R');
-                        }
-                        else {
+                        } else {
                             String[] ttt = operands_str.split("[-+*/]");
                             int A = 0, R = 0;
-                            for(String s: ttt) {
-                                if(symbolTable.isLabel(s)) {
+                            for (String s : ttt) {
+                                if (symbolTable.isLabel(s)) {
                                     operands_str = operands_str.replaceAll(s, Integer.toString(symbolTable.getEntry(s).getDecimalValue()));
-                                    if(symbolTable.getEntry(s).getFlag() == 'A')
+                                    if (symbolTable.getEntry(s).getFlag() == 'A') {
                                         A++;
-                                    else R++;
-                                }
-                                else if(isDecimal(s))
-                                {
+                                    } else {
+                                        R++;
+                                    }
+                                } else if (isDecimal(s)) {
                                     //do nothing
-                                }
-                                else
-                                {
+                                } else {
                                     System.out.println("ERROR: symbol not found");
                                     genPass2 = false;
                                 }
@@ -177,13 +174,12 @@ public class Assembler {
                                 //System.err.println("hena elmoshkella" + operands_str);
                                 String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
                                 //x = x.substring(0,x.length()-2);
-                                symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A? 'R' : 'A');
+                                symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A ? 'R' : 'A');
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         // is label -> address
                         symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'A');
                     }
@@ -213,22 +209,20 @@ public class Assembler {
         }
     }
 
-    public void addLit(){
-        
+    public void addLit() {
+
         int i;
-        for(i=0; i<literals.size(); i++)
-        {
-            if(literals.get(i).isMark() == false)
-            {
+        for (i = 0; i < literals.size(); i++) {
+            if (literals.get(i).isMark() == false) {
                 Lit l = literals.get(i);
                 String s = l.getValue();
-                Line line = new Line(s, LOCCTR,this.symbolTable, 0);
-                
+                Line line = new Line(s, LOCCTR, this.symbolTable, 0);
+
             }
         }
-        
-    
+
     }
+
     // Because labels may be declared after they are used,
     // we need a way to save them before sgkzdjngldsin
     /*private void collectLabels(String asmFileName) {
@@ -268,13 +262,13 @@ public class Assembler {
     }
 
     public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
-        
+
         System.out.println("\n\n~~~~~~~PASS 2~~~~~~~~\n\n");
         int i = 0;
         while (i < linesOfCode.size()) {
 
             Line line = linesOfCode.get(i);
-            if(!line.validateOperands(symbolTable)) {
+            if (!line.validateOperands(symbolTable)) {
                 System.out.println(line.toString());
                 break;
             }
@@ -282,60 +276,59 @@ public class Assembler {
                 //System.out.println("test");
                 enableBase = true;
                 base = getBaseValue(baseCounter);
-                System.out.println("base is "+base);
+                System.out.println("base is " + base);
                 baseCounter++;
             }
-            
+
             ArrayList<Operand> op = new ArrayList<>();
             if (line.getIsError() == false && line.getIsComment() == false && line.getInstr() != null && line.getIsDirective() == false && line.getInstr().getOperands().size() > 0) {
                 op = line.getInstr().getOperands();
-                if (op.get(0).getType() == 'l' || op.get(0).getType() =='v' ) {
+                if (op.get(0).getType() == 'l' || op.get(0).getType() == 'v') {
                     //String l = op.get(0).getName();
                     // System.out.print(" operand "+l);
                     String n = op.get(0).getCode(symbolTable, line.getInstr().getFormat());
-                    if(n == null)
+                    if (n == null) {
                         System.out.println(String.format("BLAME THIS: %s %s", line.getInstr().getMnemonic(), op.get(0).getName()));
+                    }
                     //           System.out.println(" location "+n);
                     int TA = hex2dec(n);
                     //System.out.println("target address  "+TA);
                     int current = hex2dec(linesOfCode.get(i + 1).getAddress());
                     // System.out.print("current " + current);
                     target = TA - current;
-                   //System.out.print("test target" +target);
-                   if(line.getInstr().getFormat() !=4)
+                    //System.out.print("test target" +target);
+                    if (line.getInstr().getFormat() != 4) {
                         setBP(target);
+                    }
                     //System.out.print("test");
-                    
+
                     //if(line.getInstr().getI() == true && line.getInstr().getN() == false)
-                      //  target = TA;
-                     if (b == false && p == false) {
+                    //  target = TA;
+                    if (b == false && p == false) {
                         target = TA;
                     } else if (b == true && p == false) {
                         target = TA - base;
                         String x = Integer.toBinaryString(target);
-                    //System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
+                        //System.out.println( x + "    target " + target + "TA " + TA + "base " + base);
 
-                    }
-                    else if (b == false && p == true) {
+                    } else if (b == false && p == true) {
                         target = TA - current;
                     }
-                    if(target < 0) {
-                        target = 4096+target;
+                    if (target < 0) {
+                        target = 4096 + target;
                     }
-                    if(line.getInstr().getFormat()!=4 && target > 4095 && (target < 0 && b == true))
-                    {
+                    if (line.getInstr().getFormat() != 4 && target > 4095 && (target < 0 && b == true)) {
                         System.out.println("error target base out of bounds");
                         System.exit(0);
                     }
                     //String t = Integer.toBinaryString(target);
-                   //System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
+                    //System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
 
                 }
             }
-            
 
             String s = line.getObjectCode(symbolTable).toUpperCase();
-            line.text= s;
+            line.text = s;
             String ret = String.format("%3d   %6s   %s\t      %s", line.getLine_no(), line.getAddress(), line.getCode_line(), s);
             System.out.println(ret);
             // String s1 = symbolTable.getLocation(line.getInstr().getOperands().get(0).getCode(symbolTable, target));
@@ -366,17 +359,16 @@ public class Assembler {
 
     public static void setBP(int target) {
         if (enableBase == false) {
-           // System.out.println("pcrelatve1");
-           if(target >2048 || target <-2047 )
-           {
-               System.out.println("error no base allowed");
-               System.exit(0);
-           }
+            // System.out.println("pcrelatve1");
+            if (target > 2048 || target < -2047) {
+                System.out.println("error no base allowed");
+                System.exit(0);
+            }
             b = false;
             p = true;
             //continue;
         } else if (target < 2048 && target > -2048) {
-          //  System.out.println("pcrelatve2");
+            //  System.out.println("pcrelatve2");
             b = false;
             p = true;
         } else /*if (target < 4096)*/ {
@@ -385,18 +377,19 @@ public class Assembler {
             p = false;
         }
     }
-    public  ArrayList<String> mod(){
 
-         int i = 0;
-         ArrayList<String> mods = new ArrayList<>();
+    public ArrayList<String> mod() {
+
+        int i = 0;
+        ArrayList<String> mods = new ArrayList<>();
         while (i < linesOfCode.size()) {
 
             Line line = linesOfCode.get(i);
-            if(line.getInstr()!= null && line.getInstr().getFormat() == 4 && line.getInstr().getMnemonic().charAt(0)!='#' && !"RSUB".equals(line.getInstr().getMnemonic())){
-                    
+            if (line.getInstr() != null && line.getInstr().getFormat() == 4 && line.getInstr().getMnemonic().charAt(0) != '#' && !"RSUB".equals(line.getInstr().getMnemonic())) {
+
                 String r = "M^";
-                                  
-                int loc = hex2dec(line.getAddress())+1;
+
+                int loc = hex2dec(line.getAddress()) + 1;
                 String start = decToHex(loc, 6);
                 r += start;
                 r += "^05";
@@ -404,79 +397,82 @@ public class Assembler {
 
             }
             i++;
-        
+
         }
         return mods;
     }
-    public String newText(int i){
-        String r= "T";
-        while(i < linesOfCode.size()){
-                    //System.out.println("dsfs");
+
+    public String newText(int i) {
+        String r = "T";
+        while (i < linesOfCode.size()) {
+            //System.out.println("dsfs");
             String t = "";
-            while(t.length() <= 60 ){
-                if(" ".equals(linesOfCode.get(i).getObjectCode(symbolTable))){
+            while (t.length() <= 60) {
+                if (" ".equals(linesOfCode.get(i).getObjectCode(symbolTable))) {
                     break;
                 }
                 t += linesOfCode.get(i).getObjectCode(symbolTable);
-                        System.out.println(t);
-                        i++;
-                                    System.out.println(i);
+                System.out.println(t);
+                i++;
+                System.out.println(i);
 
             }
-             r += t.length() + t;
-         }
+            r += t.length() + t;
+        }
         return r;
     }
-    public ArrayList<String> text(){
-      //  System.out.println("dsfs");
-        int i=0;
+
+    public ArrayList<String> text() {
+        //  System.out.println("dsfs");
+        int i = 0;
         ArrayList<String> texts = new ArrayList<>();
-        while(i < linesOfCode.size()){
-                    //System.out.println("dsfs");
+        while (i < linesOfCode.size()) {
+            //System.out.println("dsfs");
             String t = "";
             int st = i;
-            int n=0;
+            int n = 0;
             int length;
-            while(i < linesOfCode.size() && (t.length()+linesOfCode.get(i).text.length()) < 60+n &&!" ".equals(linesOfCode.get(i).text)/* && !(linesOfCode.get(i).getIsDirective() == true && (!linesOfCode.get(i).getDir().getName().equalsIgnoreCase("BASE") || !linesOfCode.get(i).getDir().getName().equalsIgnoreCase("NOBASE")))*/){
-                
-                t += linesOfCode.get(i).text +"^";
-                      n++;  
-                     i++;   
-            }
-            length = t.length()-n;
-            while(i < linesOfCode.size() && " ".equals(linesOfCode.get(i).text))
+            while (i < linesOfCode.size() && (t.length() + linesOfCode.get(i).text.length()) < 60 + n && !" ".equals(linesOfCode.get(i).text)/* && !(linesOfCode.get(i).getIsDirective() == true && (!linesOfCode.get(i).getDir().getName().equalsIgnoreCase("BASE") || !linesOfCode.get(i).getDir().getName().equalsIgnoreCase("NOBASE")))*/) {
+
+                t += linesOfCode.get(i).text + "^";
+                n++;
                 i++;
-           // i=linesOfCode.get(i).getLine_no();
-            String r = "T^" + linesOfCode.get(st).getAddress().toUpperCase()+"^"+ decToHex(length/2,2)+"^" + t.toUpperCase();
+            }
+            length = t.length() - n;
+            while (i < linesOfCode.size() && " ".equals(linesOfCode.get(i).text)) {
+                i++;
+            }
+            // i=linesOfCode.get(i).getLine_no();
+            String r = "T^" + linesOfCode.get(st).getAddress().toUpperCase() + "^" + decToHex(length / 2, 2) + "^" + t.toUpperCase();
             //System.out.println(r);
-            r=r.substring(0, r.length()-1).toUpperCase();
+            r = r.substring(0, r.length() - 1).toUpperCase();
             texts.add(r);
-           // i++;
-           
-        
+            // i++;
+
         }
-        
-        
+
         return texts;
     }
-    public String head(){
-            int end = hex2dec(linesOfCode.get(linesOfCode.size()-1).getAddress());
-            int start = hex2dec(linesOfCode.get(0).getAddress());
-            int length = end - start;
-            String h = "H^";
-            h += linesOfCode.get(0).getLabel()+"^" + linesOfCode.get(0).getAddress()+"^" + decToHex(length,6);
-    
+
+    public String head() {
+        int end = hex2dec(linesOfCode.get(linesOfCode.size() - 1).getAddress());
+        int start = hex2dec(linesOfCode.get(0).getAddress());
+        int length = end - start;
+        String h = "H^";
+        h += linesOfCode.get(0).getLabel() + "^" + linesOfCode.get(0).getAddress() + "^" + decToHex(length, 6);
+
         return h.toUpperCase();
     }
-    public String end(){
+
+    public String end() {
         String e = "E^";
         e += linesOfCode.get(0).getAddress().toUpperCase();
-        
-    return e;
+
+        return e;
     }
 
     public static void main(String[] args) throws IOException {
-        
+
         String asmFileName = "equ_error";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
@@ -485,60 +481,61 @@ public class Assembler {
         if (enableBase == true) {
             base = getBaseValue(baseCounter);
         }
-        int i =0;
-        for(i=0; i<literals.size(); i++){
+        int i = 0;
+        for (i = 0; i < literals.size(); i++) {
             System.out.println(literals.get(i).toString());
-            
-            
+
         }
         //System.out.print(base);
-        if(pass1result)
-        {
+        if (pass1result) {
             assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
-        ArrayList<String> modRecords;
-               
-        modRecords = assembler.mod();
-        
-        while(i < modRecords.size()){
+            ArrayList<String> modRecords;
+
+            modRecords = assembler.mod();
+
+            while (i < modRecords.size()) {
                 System.out.println(modRecords.get(i));
                 i++;
-        }
-        String head = assembler.head();
-        System.out.println(head);
-        String end = assembler.end();
-        System.out.println(end);
-        
-         ArrayList<String> textRecords;
-               
-        textRecords = assembler.text();
-        i =0;
-        while(i < textRecords.size()){
+            }
+            String head = assembler.head();
+            System.out.println(head);
+            String end = assembler.end();
+            System.out.println(end);
+
+            ArrayList<String> textRecords;
+
+            textRecords = assembler.text();
+            i = 0;
+            while (i < textRecords.size()) {
                 System.out.println(textRecords.get(i));
                 i++;
-        }
-        FileWriter htme = new FileWriter("HTME.txt");
-        htme.write(head + "\r\n");
-        i =0;
-        while(i < textRecords.size()){          
+            }
+            FileWriter htme = new FileWriter("HTME.txt");
+            htme.write(head + "\r\n");
+            i = 0;
+            while (i < textRecords.size()) {
                 htme.write(textRecords.get(i) + "\r\n");
                 i++;
-        }
-        i =0;
-        while(i < modRecords.size()){
+            }
+            i = 0;
+            while (i < modRecords.size()) {
                 htme.write(modRecords.get(i) + "\r\n");
                 i++;
+            }
+            htme.write(end + "\r\n");
+
+            htme.close();
+            // Assembler start = new Assembler();
+            // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
         }
-        htme.write(end + "\r\n");
-        
-        htme.close();
-        // Assembler start = new Assembler();
-        // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
     }
-    }
+
     Boolean isDecimal(String str) {
-        for(int i = 0; i < str.length(); i++)
-            if(!Character.isDigit(str.charAt(i)))
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isDigit(str.charAt(i))) {
                 return false;
+            }
+        }
         return true;
     }
 
