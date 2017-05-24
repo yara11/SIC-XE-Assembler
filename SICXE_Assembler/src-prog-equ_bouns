@@ -1,0 +1,13 @@
+  1   001000   SUM      START   1000         
+  2   001000   FIRST    +LDA    #BEGIN
+  3   001004            +LDX    #FINAL
+  4   001008   LOOP     ADDR    X,A
+  5   00100A            TIX     #11
+  6   00100D            JLT     LOOP
+  7   001010            +STA    #POS
+  8   001014            ORG     2000
+  9   002000   BEGIN    EQU     *
+ 10   002000   DUMP     RESW    1
+ 11   002003   FINAL    EQU     * 
+ 12   002003   POS      EQU     FINAL-BEGIN
+ 13   002003            END     SUM  

@@ -115,8 +115,9 @@ public class Directive {
             case "ORG":
             case "EXTDEF":
             case "EXTREF":
-            case "CSECT":
                 return "";
+            case "CSECT":
+                return " ";
             case "RESW":
             case "RESB":
                 return " ";

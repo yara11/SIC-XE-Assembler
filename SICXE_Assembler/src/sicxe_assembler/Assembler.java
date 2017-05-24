@@ -162,15 +162,15 @@ public class Assembler {
                         }
                         try {
                             // System.err.println("hena elmoshkella" + operands_str);
-<<<<<<< HEAD
+
                             String x;
                             x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
                             x = x.substring(0, x.length()-2);
                             // x = x.substring(0, x.length() - 2);
-=======
-                            String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                             x = x.substring(0, x.length() - 2);
->>>>>>> refs/remotes/origin/cathy
+
+                            //String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
+                            // x = x.substring(0, x.length() - 2);
+
                             prev_locctr = LOCCTR.getLocation();
                             org_enable = true;
                             LOCCTR.setLocation(x);
@@ -196,7 +196,8 @@ public class Assembler {
                     // case of EQU, ORG
                     if (cur_line.getIsDirective() && Line.hamada(line, 9, 14).toUpperCase().equals("EQU")) {
                         String operands_str = Line.hamada(line, 16, line.length() - 1);
-                        if (operands_str.equals("[*]")) {
+                        if (operands_str.equals("*")) {
+                            
                             symbolTable.addSymbol(cur_line.getLabel(), decToHex(LOCCTR.getLocation(), 6), 'R');
                         } else {
                             String[] ttt = operands_str.split("[-+*/]");
@@ -309,7 +310,11 @@ public class Assembler {
 
     public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
 
-        consec = 1;
+        if(consec > 1)
+        {
+            consec = 1;
+            symbolTable = symtables.get(consec-1);
+        }
         System.out.println("\n\n~~~~~~~PASS 2~~~~~~~~\n\n");
         int i = 0;
         while (i < linesOfCode.size()) {
@@ -318,9 +323,10 @@ public class Assembler {
             
             if ( line.getIsDirective() == true && line.dir.getName().toUpperCase().equals("CSECT")) {
                 consec++;
-            }
-            System.err.println("control section " + consec);
+                System.err.println("control section " + consec);
             symbolTable = symtables.get(consec-1);
+            }
+            
             if (!line.validateOperands(symbolTable)) {
                 System.out.println(line.toString());
                 break;
@@ -367,8 +373,11 @@ public class Assembler {
                     int current = hex2dec(linesOfCode.get(i + 1).getAddress());
                     // System.out.print("current " + current);
                     target = TA - current;
+                    p=true;
+                    b=false;
+                    
                     //System.out.print("test target" +target);
-                    if (line.getInstr().getFormat() != 4) {
+                    /*if (line.getInstr().getFormat() != 4) {
                         setBP(target);
                     }
                     //System.out.print("test");
@@ -394,7 +403,7 @@ public class Assembler {
                     }
                     //String t = Integer.toBinaryString(target);
                     //System.out.println( t + "    target " + target + "TA " + TA + "current " + current);
-
+*/
                 }
             }
 
@@ -553,7 +562,7 @@ public class Assembler {
 
     public static void main(String[] args) throws IOException {
 
-        String asmFileName = "control_section";
+        String asmFileName = "equ_bouns";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);
@@ -572,10 +581,14 @@ public class Assembler {
         }
         //System.out.print(base);
         if (pass1result) {
+            
             assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
                      }
+        if(consec >1)
+        {
             consec = 1;
             symbolTable = symtables.get(consec-1);
+        }
             String D="";
             
             System.err.println(D);

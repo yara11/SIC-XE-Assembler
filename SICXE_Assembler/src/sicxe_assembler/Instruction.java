@@ -109,7 +109,7 @@ public class Instruction {
                     objectCode += "000";
                 else{
                 objectCode += decToHex(toint(x), toint(Assembler.getB()), toint(Assembler.getP()), toint(e));
-                // System.out.println("test1");
+                
                 
                   if(this.operands.get(0).getType() == 'v'){
                     String str = this.operands.get(0).getName();
@@ -118,10 +118,19 @@ public class Instruction {
                     objectCode += str;
                 }
                 else
-                    objectCode += Assembler.decToHex(Assembler.target,3);
-                
+                  {
+                      
+                      String x = Assembler.decToHex(Assembler.target,3);
+                      
+                      while(x.length() >3)
+                      {
+                          x= x.substring(1);
+                      }
+                    objectCode += x;
+                     
+                  }
                 }
-                while(objectCode.length() != 6){
+                while(objectCode.length() < 6){
                     objectCode += "0";
                 }
                 break;
