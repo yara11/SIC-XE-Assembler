@@ -27,7 +27,14 @@ public class Operand {
     }
     
     public static Boolean isValid(String str, SymbolTable symbolTable) {
-        return isDecimal(str) || RegisterSet.isRegister(str) || symbolTable.isLabel(str);
+        Boolean y = false;
+        for(String s : Assembler.references)
+        {
+            if (s.equalsIgnoreCase(str))
+                y=true;
+        }
+        
+        return isDecimal(str) || RegisterSet.isRegister(str) || symbolTable.isLabel(str) ||y;
     }
     
     private Boolean isNumber(String str) {
@@ -59,7 +66,13 @@ public class Operand {
             case 'v':
                 return Assembler.decToHex(Integer.parseInt(this.name), format*2-3);
             default:
+                for(String r:Assembler.references)
+                {
+                    if(r.equals(name))
+                        return "000";
+                }
                 String loc = symbolTable.getEntry(name).getValue().substring(1);
+                
                 //System.out.print("target  "+Assembler.target);
                 //System.out.print(loc);
                 return loc;
