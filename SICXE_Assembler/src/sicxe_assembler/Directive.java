@@ -60,7 +60,7 @@ public class Directive {
         if(name.equals("RESW") || name.equals("RESB") || name.equals("WORD")) {
             return isDecimal(operand);
         }
-        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end") || name.equalsIgnoreCase("ltorg")){
+        if(name.equals("BASE") || name.equals("NOBASE") || name.equals("START") || name.equalsIgnoreCase("end") || name.equalsIgnoreCase("ltorg") || name.equalsIgnoreCase("extdef")|| name.equalsIgnoreCase("extref")|| name.equalsIgnoreCase("csect")   ){
             return true;
         }
         else if(name.equals("BYTE")) {
@@ -113,6 +113,9 @@ public class Directive {
             case "LTORG":
             case "EQU":
             case "ORG":
+            case "EXTDEF":
+            case "EXTREF":
+            case "CSECT":
                 return "";
             case "RESW":
             case "RESB":

@@ -18,7 +18,10 @@ public class Assembler {
     private final String instrSetFileName = "instruction_set.txt";
     private static Boolean b, p;
     public static int target;
+    public static ArrayList<String> definitions = new ArrayList<>();
+    public static ArrayList<String> references = new ArrayList<>();
     public static ArrayList<Lit> literals = new ArrayList<>();
+    public static ArrayList<SymbolTable> symtables = new ArrayList<>();
     Boolean org_enable = false;
     int prev_locctr;
     // private String asmFileName;
@@ -31,7 +34,10 @@ public class Assembler {
     private static boolean baseError = false;
     private static ArrayList<Line> baseLines = new ArrayList<>();
     private static int baseCounter = 0;
-
+    private static int consec = 1;
+    private static  ArrayList<String> RRecords= new ArrayList<>();
+    private static  ArrayList<String> DRecords= new ArrayList<>();
+    
     public static Boolean getB() {
         //System.out.print("oide");
         return b;
@@ -58,6 +64,7 @@ public class Assembler {
     }
 
     public Boolean pass1(String asmFileName, String outputSrcFileName) {
+        ArrayList<String> records = new ArrayList<>();
         //this.collectLabels(asmFileName);
         // Load source code file
         int line_no = 0;
@@ -79,7 +86,39 @@ public class Assembler {
                     cur_line.setAddress(decToHex(LOCCTR.getLocation(), 6));
                     //System.out.print(cur_line.getObjectCode(symbolTable));
                 }
-
+                if ( Line.hamada(line, 9, 14).toUpperCase().equals("EXTDEF")) {
+                    String def = Line.hamada(line, 16, line.length()-1);
+                    System.err.println(def);
+                    String[] defs = def.split(",");
+                    for(String d:defs)
+                    {
+                        definitions.add(d);
+                    }
+                    
+                }
+                if ( Line.hamada(line, 9, 14).toUpperCase().equals("EXTREF")) {
+                    String ref = Line.hamada(line, 16, line.length()-1);
+                    System.err.println(ref);
+                    String rrecord="R^";
+                    String[] refs = ref.split(",");
+                    for(String r:refs)
+                    {
+                        references.add(r);
+                        rrecord += r + "^";
+                        System.err.println(rrecord);
+                    }
+                    RRecords.add(rrecord);
+                }
+                if ( Line.hamada(line, 9, 14).toUpperCase().equals("CSECT")) {
+                    LOCCTR.setLocation(0);
+                    consec ++;
+                    
+                    symtables.add(symbolTable);
+                    SymbolTable newsym = new SymbolTable();
+                    symtables.add(newsym);
+                    symbolTable = symtables.get(consec - 1);
+                    
+                }
                 if (Line.hamada(line, 9, 14).toUpperCase().equals("LTORG")) {
                     addLit();
                 }
@@ -124,7 +163,7 @@ public class Assembler {
                         try {
                             // System.err.println("hena elmoshkella" + operands_str);
                             String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                            // x = x.substring(0, x.length() - 2);
+                             x = x.substring(0, x.length() - 2);
                             prev_locctr = LOCCTR.getLocation();
                             org_enable = true;
                             LOCCTR.setLocation(x);
@@ -173,7 +212,7 @@ public class Assembler {
                             try {
                                 //System.err.println("hena elmoshkella" + operands_str);
                                 String x = (new ScriptEngineManager().getEngineByName("JavaScript").eval(operands_str)).toString();
-                                //x = x.substring(0,x.length()-2);
+                                x = x.substring(0,x.length()-2);
                                 symbolTable.addSymbol(cur_line.getLabel(), decToHex(Integer.parseInt(x), 6), R > A ? 'R' : 'A');
                             } catch (ScriptException ex) {
                                 Logger.getLogger(Assembler.class.getName()).log(Level.SEVERE, null, ex);
@@ -263,15 +302,40 @@ public class Assembler {
 
     public void pass2(String asmFileName, String outputSrcFileName, SymbolTable symbolTable) {
 
+        consec = 1;
         System.out.println("\n\n~~~~~~~PASS 2~~~~~~~~\n\n");
         int i = 0;
         while (i < linesOfCode.size()) {
 
             Line line = linesOfCode.get(i);
+            
+            if ( line.getIsDirective() == true && line.dir.getName().toUpperCase().equals("CSECT")) {
+                consec++;
+            }
+            System.err.println("control section " + consec);
+            symbolTable = symtables.get(consec-1);
             if (!line.validateOperands(symbolTable)) {
                 System.out.println(line.toString());
                 break;
             }
+            
+            if ( line.getIsDirective() == true && line.dir.getName().toUpperCase().equals("EXTDEF")) {
+                String D="D^";
+                
+                D = "D^";
+            for(String d : definitions){
+                if(symbolTable.isLabel(d))
+                {
+                System.err.println(d+ "hena" + symbolTable.getEntry(d).getValue());
+                D =D+ d +"^"+ symbolTable.getEntry(d).getValue() +"^";
+                }
+            }
+                DRecords.add(D);
+                
+                
+            }
+            
+            
             if (baseCounter < baseLines.size() && line.getLine_no() == baseLines.get(baseCounter).getLine_no()) {
                 //System.out.println("test");
                 enableBase = true;
@@ -388,11 +452,20 @@ public class Assembler {
             if (line.getInstr() != null && line.getInstr().getFormat() == 4 && line.getInstr().getMnemonic().charAt(0) != '#' && !"RSUB".equals(line.getInstr().getMnemonic())) {
 
                 String r = "M^";
-
+                String x = line.getInstr().getOperands().get(0).getName();
+                //System.err.println("modify " +x);
                 int loc = hex2dec(line.getAddress()) + 1;
                 String start = decToHex(loc, 6);
                 r += start;
                 r += "^05";
+                for(String s : references)
+                {
+                    if (x.equalsIgnoreCase(s))
+                    {System.err.println("hena1");
+                        r +="^+" + s;
+                        
+                    }
+                }
                 mods.add(r.toUpperCase());
 
             }
@@ -473,10 +546,14 @@ public class Assembler {
 
     public static void main(String[] args) throws IOException {
 
-        String asmFileName = "equ_error";
+        String asmFileName = "control_section";
         String srcCodeFileName = "src-prog-" + asmFileName;
         Assembler assembler = new Assembler();
         Boolean pass1result = assembler.pass1(asmFileName, srcCodeFileName);
+        for(String r: references)
+        {
+            System.err.println("ref "+r);
+        }
         //ToDo: nzabat mkanha fein
         if (enableBase == true) {
             base = getBaseValue(baseCounter);
@@ -489,10 +566,20 @@ public class Assembler {
         //System.out.print(base);
         if (pass1result) {
             assembler.pass2(asmFileName, srcCodeFileName, symbolTable);
+                     }
+            consec = 1;
+            symbolTable = symtables.get(consec-1);
+            String D="";
+            
+            System.err.println(D);
             ArrayList<String> modRecords;
-
+            i=0;
+            while (i < DRecords.size()) {
+                System.out.println(DRecords.get(i));
+                i++;
+            }
             modRecords = assembler.mod();
-
+            i=0;
             while (i < modRecords.size()) {
                 System.out.println(modRecords.get(i));
                 i++;
@@ -506,6 +593,11 @@ public class Assembler {
 
             textRecords = assembler.text();
             i = 0;
+            while (i < RRecords.size()) {
+                System.out.println(RRecords.get(i));
+                i++;
+            }
+            i=0;
             while (i < textRecords.size()) {
                 System.out.println(textRecords.get(i));
                 i++;
@@ -528,8 +620,7 @@ public class Assembler {
             // Assembler start = new Assembler();
             // System.out.println(String.format("%3d   %6s   %8s   %6s   %18s   %31s", 1, "0003A0", "TERMPROJ", "START", "3A0", ""));
         }
-    }
-
+    
     Boolean isDecimal(String str) {
         for (int i = 0; i < str.length(); i++) {
             if (!Character.isDigit(str.charAt(i))) {

@@ -1,0 +1,54 @@
+  1   000000   MAIN     START   0
+  2   000000            EXTDEF  ADDR1,ADDR2,ADDR3
+  3   000000            EXTREF  RTADDR,GETPAIR       
+  4   000000            CLEAR   X
+  5   000002            +JSUB   GETPAIR
+  6   000006            STCH    ADDR2
+  7   000009            +JSUB   GETPAIR
+  8   00000D            STCH    ADDR3
+  9   000010            LDB     ADDR1
+ 10   000013            +JSUB   GETPAIR
+ 11   000017            STCH    ADDR1 
+ 12   00001A            +JSUB   GETPAIR
+ 13   00001E            STCH    ADDR2
+ 14   000021   LOOP     +JSUB   GETPAIR
+ 15   000025            STCH    ADDR1,X
+ 16   000028            TIXR    X
+ 17   00002A            +STCH   RTADDR
+ 18   00002E            J       LOOP
+ 19   000031   ADDR1    RESB    1
+ 20   000032   ADDR2    RESB    1
+ 21   000033   ADDR3    RESB    1
+ 22   000034   GETPAIR  CSECT
+ 23   000000            EXTDEF  RTADDR,ORADDR  
+ 24   000000            EXTREF  READ   
+ 25   000000            STL     RTADDR
+ 26   000003            +JSUB   READ
+ 27   000007            SHIFTL  A,4
+ 28   000009            STCH    HEX
+ 29   00000C            OR      ORADDR
+ 30   00000F            J       @RTADDR
+ 31   000012   RTADDR   RESB    1
+ 32   000013   ORADDR   RESB    1
+ 33   000014   HEX      RESB    1
+ 34   000015   READ     CSECT
+ 35   000000            EXTREF  ADDR1     
+ 36   000000            TD      INDEV
+ 37   000003            JEQ     READ 
+ 38   000006            CLEAR   A
+ 39   000008            RD      INDEV
+ 40   00000B            COMP    #48
+ 41   00000E            JLT     EOFCK
+ 42   000011            SUB     #48
+ 43   000014            COMP    #10
+ 44   000017            JLT     GOBACK
+ 45   00001A            SUB     #7
+ 46   00001D   GOBACK   RSUB    
+ 47   000020   EOFCK    COMP    #33
+ 48   000023            JEQ     EXIT
+ 49   000026            COMP    #4
+ 50   000029            JGT     READ
+ 51   00002C   EXIT     CLEAR   L 
+ 52   00002E            +J      ADDR1 
+ 53   000032   INDEV    BYTE    X'F1'     
+ 54   000033            END     MAIN
